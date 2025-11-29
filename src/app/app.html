@@ -1,0 +1,36 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-morado">
+  <div class="container">
+    <a class="navbar-brand" routerLink="/eventos-list">
+      EventosApp
+    </a>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarMain"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarMain">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/eventos-list"
+            routerLinkActive="active"
+          >
+            Catálogo
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main class="fondo-principal py-4">
+  <div class="container">
+    <router-outlet></router-outlet>
+  </div>
+</main>

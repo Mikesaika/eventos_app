@@ -1,0 +1,152 @@
+{
+    "services": [
+        {
+            "id": "1",
+            "name": "Salón Real Versalles",
+            "description": "Salón amplio para 200 personas con aire acondicionado.",
+            "categoryId": 1,
+            "companyId": 1,
+            "price": 1500.00,
+            "image": "https://st4.depositphotos.com/38538500/39584/i/1600/depositphotos_395840042-stock-photo-versailles-france-2020-royal-salon.jpg",
+            "classification": "diamante",
+            "active": true
+        },
+        {
+            "id": "2",
+            "name": "Buffet Internacional",
+            "description": "Menú de 3 tiempos con opciones de carne y mariscos.",
+            "categoryId": 2,
+            "companyId": 2,
+            "price": 35.50,
+            "image": "https://i.blogs.es/46851f/desayuno-bufet/450_1000.jpg",
+            "classification": "oro",
+            "active": true
+        },
+        {
+            "id": "3",
+            "name": "DJ + Iluminación",
+            "description": "5 horas de música variada con luces robóticas.",
+            "categoryId": 3,
+            "companyId": 3,
+            "price": 400.00,
+            "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4r80GF3Ue1FEXRSnWZV_kw4K7Kpfb9lEFuw&s",
+            "classification": "plata",
+            "active": true
+        },
+        {
+            "id": "4",
+            "name": "Decoración Floral",
+            "description": "Centros de mesa y arco de entrada.",
+            "categoryId": 4,
+            "companyId": 1,
+            "price": 250.00,
+            "image": "https://cdn0.matrimonio.com.pe/article-real-wedding/091/3_2/960/jpg/136253.jpeg",
+            "classification": "plata",
+            "active": false
+        }
+    ],
+    "categories": [
+        {
+            "id": "1",
+            "name": "Lugares",
+            "icon": "home",
+            "active": true
+        },
+        {
+            "id": "2",
+            "name": "Comida",
+            "icon": "restaurant",
+            "active": true
+        },
+        {
+            "id": "3",
+            "name": "Música",
+            "icon": "music_note",
+            "active": true
+        },
+        {
+            "id": "4",
+            "name": "Decoración",
+            "icon": "filter_vintage",
+            "active": true
+        },
+        {
+            "id": "5",
+            "name": "Fotografía",
+            "icon": "camera_alt",
+            "active": true
+        }
+    ],
+    "companies": [
+        {
+            "id": "1",
+            "name": "Eventos Magicos S.A.",
+            "contactEmail": "contacto@eventosmagicos.com",
+            "phone": "0991234567",
+            "city": "Guayaquil",
+            "active": true
+        },
+        {
+            "id": "2",
+            "name": "Banquetes Don Pepe",
+            "contactEmail": "ventas@donpepe.com",
+            "phone": "0997654321",
+            "city": "Quito",
+            "active": true
+        },
+        {
+            "id": "3",
+            "name": "Sound Pro",
+            "contactEmail": "info@soundpro.com",
+            "phone": "0981122334",
+            "city": "Cuenca",
+            "active": true
+        }
+    ],
+    "users": [
+        {
+            "id": "1",
+            "name": "Carlos Perez",
+            "email": "carlos@gmail.com",
+            "active": true
+        },
+        {
+            "id": "2",
+            "name": "Maria Lopez",
+            "email": "maria@hotmail.com",
+            "active": true
+        },
+        {
+            "id": "3",
+            "name": "Jorge Ramirez",
+            "email": "jorge@yahoo.com",
+            "active": false
+        }
+    ],
+    "orders": [
+        {
+            "id": "1",
+            "userId": 1,
+            "serviceId": 1,
+            "date": "2024-11-20",
+            "total": 1500.00,
+            "active": true
+        },
+        {
+            "id": "2",
+            "userId": 1,
+            "serviceId": 3,
+            "date": "2024-11-21",
+            "total": 400.00,
+            "active": true
+        },
+        {
+            "id": "3",
+            "userId": 2,
+            "serviceId": 2,
+            "date": "2024-10-05",
+            "total": 35.50,
+            "active": true
+        }
+    ]
+}

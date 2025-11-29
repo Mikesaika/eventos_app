@@ -1,0 +1,91 @@
+<div class="detalle-wrapper" *ngIf="!cargando && servicio">
+  <div class="card detalle-card">
+    <div class="row g-0">
+      <!-- Imagen -->
+      <div class="col-md-5">
+        <img
+          [src]="servicio.image"
+          class="img-fluid imagen-detalle"
+          [alt]="servicio.name"
+        />
+      </div>
+
+      <!-- Información -->
+      <div class="col-md-7">
+        <div class="card-body">
+          <p class="detalle-subtitulo">Detalle del servicio</p>
+
+          <h2 class="card-title detalle-titulo">
+            {{ servicio.name }}
+          </h2>
+
+          <p class="badge-clasificacion" *ngIf="servicio.classification">
+            {{ servicio.classification | uppercase }}
+          </p>
+
+          <p class="card-text descripcion-detalle">
+            {{ servicio.description }}
+          </p>
+
+          <!-- Bloque de info resumida -->
+          <div class="info-resumen">
+            <div class="info-item">
+              <span class="info-label">Categoría</span>
+              <span class="info-value">
+                {{ categoria?.name || 'Sin categoría' }}
+              </span>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label">Precio referencia</span>
+              <span class="info-value precio">
+                {{ servicio.price | currency: 'USD' }}
+              </span>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label">Empresa</span>
+              <span class="info-value">
+                {{ empresa?.name || 'No especificada' }}
+              </span>
+            </div>
+
+            <div class="info-item" *ngIf="empresa">
+              <span class="info-label">Ciudad</span>
+              <span class="info-value">
+                {{ empresa.city }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Contacto empresa -->
+          <div class="contacto-card mt-3" *ngIf="empresa">
+            <p class="contacto-titulo">Contacto de la empresa</p>
+            <p class="mb-1">
+              <strong>Teléfono:</strong> {{ empresa.phone }}
+            </p>
+            <p class="mb-1">
+              <strong>Correo:</strong> {{ empresa.contactEmail }}
+            </p>
+          </div>
+
+          <!-- Acciones -->
+          <div class="mt-4 d-flex flex-wrap gap-2">
+            <a routerLink="/eventos-list" class="btn btn-outline-secondary btn-sm">
+              ← Volver al catálogo
+            </a>
+
+            <button type="button" class="btn btn-primary btn-sm">
+              Solicitar cotización
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Estado de carga -->
+<div *ngIf="cargando" class="detalle-cargando text-center">
+  Cargando detalle del servicio...
+</div>

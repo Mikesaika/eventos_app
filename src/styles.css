@@ -1,0 +1,37 @@
+/* You can add global styles to this file, and also import other style files */
+/* === Bootstrap global === */
+@import "bootstrap/dist/css/bootstrap.min.css";
+
+/* === Estilos globales de tu app === */
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  background-color: #f7f3ff; /* blanco con toque morado */
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* Navbar morada */
+.bg-morado {
+  background: linear-gradient(90deg, #5b2a86, #7b3fb4);
+}
+
+.navbar-brand,
+.nav-link {
+  font-weight: 600;
+}
+
+.nav-link.active {
+  text-decoration: underline;
+}
+
+/* Fondo principal de las páginas */
+.fondo-principal {
+  background-color: #f7f3ff;
+  min-height: calc(100vh - 56px);
+}

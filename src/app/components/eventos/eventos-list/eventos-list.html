@@ -1,0 +1,85 @@
+<div class="catalogo-wrapper">
+  <div class="encabezado text-center">
+    <h1 class="titulo-pagina">Catálogo de servicios para eventos</h1>
+    <p class="subtitulo">
+      Explora salones, comida, música, decoración y más para tu próximo evento.
+    </p>
+  </div>
+
+  <!-- Estado de carga -->
+  <div *ngIf="cargando" class="text-center texto-secundario mt-4">
+    Cargando servicios...
+  </div>
+
+  <!-- Sin resultados -->
+  <div
+    *ngIf="!cargando && services.length === 0"
+    class="text-center texto-secundario mt-4"
+  >
+    No hay servicios disponibles por el momento.
+  </div>
+
+  <!-- Grid de cards -->
+  <div
+    *ngIf="!cargando && services.length > 0"
+    class="row g-4 justify-content-center mt-3"
+  >
+    <div
+      class="col-12 col-sm-10 col-md-6 col-lg-4"
+      *ngFor="let servicio of services; trackBy: trackById"
+    >
+      <div class="card card-servicio h-100">
+        <div class="img-container">
+          <img
+            [src]="servicio.image"
+            class="card-img-top img-servicio"
+            [alt]="servicio.name"
+          />
+          <span
+            class="badge badge-clasificacion"
+            [ngClass]="getBadgeClass(servicio.classification)"
+          >
+            {{ servicio.classification | uppercase }}
+          </span>
+        </div>
+
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title nombre-servicio">
+            {{ servicio.name }}
+          </h5>
+
+          <p class="card-text descripcion">
+            {{ servicio.description }}
+          </p>
+
+          <p class="mb-1 categoria">
+            <strong>Categoría:</strong>
+            {{ getCategoryName(servicio.categoryId) }}
+          </p>
+
+          <p class="mb-1 precio">
+            <strong>Precio desde:</strong>
+            {{ servicio.price | currency: 'USD' }}
+          </p>
+
+          <div class="mt-auto pt-3 d-flex justify-content-between gap-2">
+            <a
+              [routerLink]="['/eventos-view', servicio.id]"
+              class="btn btn-outline-primary btn-sm btn-detalle"
+            >
+              Ver detalle
+            </a>
+
+            <button
+              type="button"
+              class="btn btn-primary btn-sm btn-pedir"
+            >
+              Pedir servicio
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
