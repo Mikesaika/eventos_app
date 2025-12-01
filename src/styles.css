@@ -1,8 +1,16 @@
-/* You can add global styles to this file, and also import other style files */
-/* === Bootstrap global === */
+/* === IMPORTACIONES === */
+
+/* 1. Fuente Poppins (Para un look más moderno) */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+/* 2. Bootstrap CSS */
 @import "bootstrap/dist/css/bootstrap.min.css";
 
-/* === Estilos globales de tu app === */
+/* 3. Bootstrap Icons (¡IMPORTANTE! Sin esto no se ven los iconos del CRUD) */
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
+
+/* === ESTILOS GLOBALES === */
 
 html,
 body {
@@ -13,12 +21,14 @@ body {
 
 body {
   background-color: #f7f3ff; /* blanco con toque morado */
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  /* Integramos 'Poppins' primero. Si no carga, usa las del sistema */
+  font-family: 'Poppins', system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 /* Navbar morada */
+/* Tu gradiente está excelente, agregué !important por seguridad contra Bootstrap */
 .bg-morado {
-  background: linear-gradient(90deg, #5b2a86, #7b3fb4);
+  background: linear-gradient(90deg, #5b2a86, #7b3fb4) !important;
 }
 
 .navbar-brand,
@@ -26,12 +36,25 @@ body {
   font-weight: 600;
 }
 
+/* Estilo para enlace activo en el menú */
 .nav-link.active {
   text-decoration: underline;
+  color: #ffffff !important; /* Forzamos blanco para que destaque */
 }
 
 /* Fondo principal de las páginas */
 .fondo-principal {
   background-color: #f7f3ff;
-  min-height: calc(100vh - 56px);
+  min-height: calc(100vh - 56px); /* Altura total menos la barra de navegación */
+}
+
+/* Ajustes opcionales para botones primarios para que coincidan con tu morado */
+.btn-primary {
+  background-color: #5b2a86;
+  border-color: #5b2a86;
+}
+
+.btn-primary:hover {
+  background-color: #4a2270;
+  border-color: #4a2270;
 }

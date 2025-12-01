@@ -51,4 +51,20 @@ export class ServEventosJson {
     getOrders(): Observable<Order[]> {
         return this.http.get<Order[]>(this.ordersUrl);
     }
+    // Crear un servicio
+    createService(service: Service): Observable<Service> {
+        return this.http.post<Service>(this.servicesUrl, service);
+    }
+
+    // Actualizar un servicio
+    updateService(service: Service): Observable<Service> {
+        const url = `${this.servicesUrl}/${service.id}`;
+        return this.http.put<Service>(url, service);
+    }
+
+    // Eliminar un servicio
+    deleteService(id: string): Observable<void> {
+        const url = `${this.servicesUrl}/${id}`;
+        return this.http.delete<void>(url);
+    }
 }
