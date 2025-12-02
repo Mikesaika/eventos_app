@@ -22,7 +22,7 @@ export class ServEventosJson {
 
     constructor(private http: HttpClient) { }
 
-    // ===== SERVICES =====
+    //  SERVICES 
     getServices(): Observable<Service[]> {
         return this.http.get<Service[]>(this.servicesUrl);
     }
@@ -32,22 +32,22 @@ export class ServEventosJson {
         return this.http.get<Service>(url);
     }
 
-    // ===== CATEGORIES =====
+    // CATEGORIES 
     getCategories(): Observable<Category[]> {
         return this.http.get<Category[]>(this.categoriesUrl);
     }
 
-    // ===== COMPANIES =====
+    //  COMPANIES 
     getCompanies(): Observable<Company[]> {
         return this.http.get<Company[]>(this.companiesUrl);
     }
 
-    // ===== USERS =====
+    // USERS 
     getUsers(): Observable<User[]> {
         return this.http.get<User[]>(this.usersUrl);
     }
 
-    // ===== ORDERS =====
+    // ORDERS 
     getOrders(): Observable<Order[]> {
         return this.http.get<Order[]>(this.ordersUrl);
     }

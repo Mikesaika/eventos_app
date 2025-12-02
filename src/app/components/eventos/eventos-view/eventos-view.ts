@@ -14,7 +14,7 @@ import { Company } from '../../../models/Company';
   imports: [
     NgIf,
     CurrencyPipe,
-    UpperCasePipe, // para usar | uppercase
+    UpperCasePipe, // para usar uppercase
     RouterLink,
   ],
   templateUrl: './eventos-view.html',
@@ -37,11 +37,10 @@ export class EventoView {
       return;
     }
 
-    // 1) Obtener el servicio por id
+    // Obtiene el servicio por id
     this.eventosService.getServiceById(id).subscribe((serv) => {
       this.servicio = serv;
 
-      // 2) Con el servicio, cargamos categorías y empresas para mostrar nombres
       this.eventosService.getCategories().subscribe((cats) => {
         this.categoria = cats.find(
           (c) => Number(c.id) === this.servicio.categoryId

@@ -1,21 +1,14 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-// Imports necesarios para la vista (Pipes y Directivas)
 import { NgFor, NgIf, NgClass, TitleCasePipe, CurrencyPipe } from '@angular/common';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-
-// Modelos
 import { Service } from '../../models/Service';
 import { Category } from '../../models/Category';
 import { Company } from '../../models/Company';
-
-// Servicios
 import { ServEventosJson } from '../../services/ServEventosJson';
-
-// Componente de Diálogo Reutilizable
 import { Dialog } from '../../shared/dialog/dialog';
 
-// Declaramos la variable de Bootstrap globalmente para el modal nativo
+// Se declara la variable de Bootstrap globalmente para el modal nativo
 declare const bootstrap: any;
 
 @Component({
@@ -72,7 +65,7 @@ export class ServicesCrud implements OnInit {
   }
 
   ngAfterViewInit() {
-    // Inicializamos el modal nativo de Bootstrap
+    // se inicializa el modal nativo de Bootstrap
     if (typeof bootstrap !== 'undefined') {
       this.modalRef = new bootstrap.Modal(this.modalElement.nativeElement);
     } else {
@@ -100,12 +93,12 @@ export class ServicesCrud implements OnInit {
     });
   }
 
-  // ===== FUNCIÓN DE BÚSQUEDA (Nueva) =====
+  //BUSQUEDA 
   search(input: HTMLInputElement) {
     const term = input.value.toLowerCase();
 
     if (!term) {
-      this.services = this.allServices; // Si está vacío, mostramos todo
+      this.services = this.allServices; // Si está vacío se mostrara todo
     } else {
       this.services = this.allServices.filter(s =>
         s.name.toLowerCase().includes(term) ||
@@ -114,7 +107,6 @@ export class ServicesCrud implements OnInit {
     }
   }
 
-  // ===== HELPERS =====
   getCategoryName(id: number): string {
     const cat = this.categories.find(c => Number(c.id) === Number(id));
     return cat ? cat.name : 'Sin Categoría';
@@ -128,9 +120,6 @@ export class ServicesCrud implements OnInit {
   handleImageError(event: any) {
     event.target.src = 'https://via.placeholder.com/50';
   }
-
-  // ===== ACCIONES DEL CRUD =====
-
   openNew() {
     this.editingId = null;
     this.formService.reset({ active: true, price: 0 });
@@ -144,7 +133,7 @@ export class ServicesCrud implements OnInit {
   }
 
   save() {
-    // 1. Verificar validez
+    // Verifica
     if (this.formService.invalid) {
       this.formService.markAllAsTouched(); // Marca los campos en rojo
       alert('Por favor completa todos los campos obligatorios');
@@ -152,7 +141,6 @@ export class ServicesCrud implements OnInit {
     }
 
     const datos = this.formService.value;
-    // Conversión de tipos para asegurar consistencia
     datos.categoryId = Number(datos.categoryId);
     datos.companyId = Number(datos.companyId);
 
@@ -181,7 +169,6 @@ export class ServicesCrud implements OnInit {
   }
 
   delete(service: Service) {
-    // Usamos el Dialog reutilizable
     const modalRef = this.modalService.open(Dialog);
 
     modalRef.componentInstance.data = {
@@ -192,11 +179,11 @@ export class ServicesCrud implements OnInit {
     modalRef.result.then((result) => {
       if (result === true && service.id) {
         this.miServicio.deleteService(service.id).subscribe(() => {
-          this.loadServices(); // Recargar tabla
+          this.loadServices(); // Recargara la tabla
         });
       }
     }).catch(() => {
-      // El usuario canceló o cerró el modal
+      // Si el usuario cierra o cancela
     });
   }
 }
