@@ -1,0 +1,30 @@
+<!-- Notificación -->
+<app-notification
+  *ngIf="notificationMessage"
+  [type]="notificationType"
+  [message]="notificationMessage"
+  (closed)="notificationMessage = ''">
+</app-notification>
+
+<div class="toolbar">
+  <button (click)="add()" class="btn btn-primary">Nueva Categoría</button>
+</div>
+
+<!-- Si tienes una TableReutilizable con inputs data/columns -->
+<app-reusable-table
+  [data]="categories"
+  [columns]="[
+    {key:'id', label:'ID', sortable:true},
+    {key:'name', label:'Nombre', sortable:true},
+    {key:'description', label:'Descripción'},
+    {key:'active', label:'Activa'}
+  ]"
+  (rowClick)="edit($event)">
+</app-reusable-table>
+
+<!-- Opcional: acciones por fila si tu tabla no maneja botones -->
+<div *ngFor="let c of categories" class="row-actions">
+  <span>{{c.name}}</span>
+  <button (click)="edit(c)">Editar</button>
+  <button (click)="remove(c)">Eliminar</button>
+</div>
