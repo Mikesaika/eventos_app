@@ -1,0 +1,28 @@
+<app-notification
+  *ngIf="notificationMessage"
+  [type]="notificationType"
+  [message]="notificationMessage"
+  (closed)="notificationMessage = ''">
+</app-notification>
+
+<form [formGroup]="form" (ngSubmit)="save()">
+  <div>
+    <label>Nombre</label>
+    <input formControlName="name" />
+    <div *ngIf="form.controls.name.invalid && form.controls.name.touched">Nombre requerido (mín 3)</div>
+  </div>
+
+  <div>
+    <label>Descripción</label>
+    <textarea formControlName="description"></textarea>
+  </div>
+
+  <div>
+    <label>
+      <input type="checkbox" formControlName="active" /> Activa
+    </label>
+  </div>
+
+  <button type="submit">Guardar</button>
+  <button type="button" (click)="router.navigate(['/categories'])">Cancelar</button>
+</form>
