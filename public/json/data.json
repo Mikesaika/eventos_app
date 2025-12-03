@@ -124,20 +124,6 @@
       "email": "ric.castro.alv@gmail.com",
       "role": "Cliente",
       "active": true
-    },
-    {
-      "id": "9902",
-      "name": "Carlos Perez",
-      "email": "ric.castro.alv@gmail.com",
-      "role": "Administrador",
-      "active": true
-    },
-    {
-      "id": "19fb",
-      "name": "Carlos Perez",
-      "email": "ric.castro.alv@gmail.com",
-      "role": "Cliente",
-      "active": true
     }
   ],
   "orders": [
