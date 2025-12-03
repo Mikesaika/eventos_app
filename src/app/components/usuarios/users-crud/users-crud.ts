@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ServEventosJson } from '../../../services/ServEventosJson';
-import { User } from '../../../models/User'; 
+import { User } from '../../../models/User';
 
 @Component({
   selector: 'app-users-crud',
@@ -24,8 +24,6 @@ export class UsersCrud {
   };
 
   isEditing = false;
-
- 
   modalVisible = false;
 
   constructor(private service: ServEventosJson) {}
@@ -51,7 +49,46 @@ export class UsersCrud {
     );
   }
 
-  
+  /*  LÓGICA DE VALIDACIÓN */
+
+  isFieldInvalid(form: NgForm | undefined, field: keyof User): boolean {
+    if (!form) return false;
+    const control = form.controls[field as string];
+    return !!control && control.invalid && (control.dirty || control.touched || form.submitted);
+  }
+
+  getFieldError(field: keyof User, form: NgForm | undefined): string {
+    if (!form) return '';
+    const control = form.controls[field as string];
+    if (!control || !control.errors) return '';
+
+    if (control.errors['required']) {
+      if (field === 'name') return 'El nombre es obligatorio.';
+      if (field === 'email') return 'El correo es obligatorio.';
+      if (field === 'role') return 'El rol es obligatorio.';
+      return 'Este campo es obligatorio.';
+    }
+
+    if (control.errors['email']) {
+      return 'El formato del correo no es válido.';
+    }
+
+    return 'El valor ingresado no es válido.';
+  }
+
+  isFormValid(form: NgForm | null | undefined): boolean {
+    if (!form) return false;
+
+    return form.valid === true;
+  }
+
+  canSubmit(form: NgForm | null | undefined): boolean {
+    return this.isFormValid(form);
+  }
+
+  /*     MODAL / CRUD
+   */
+
   openCreateModal() {
     this.isEditing = false;
     this.formModel = {
@@ -69,7 +106,6 @@ export class UsersCrud {
     this.modalVisible = true;
   }
 
-  
   closeModal(form?: NgForm) {
     this.modalVisible = false;
     if (form) {
@@ -78,17 +114,20 @@ export class UsersCrud {
   }
 
   saveUser(form: NgForm) {
-    if (form.invalid) return;
+    if (!this.canSubmit(form)) {
+      form.control.markAllAsTouched();
+      return;
+    }
 
     if (this.isEditing && this.formModel.id) {
-      // UPDATE
+      /* UPDATE */
       this.service.updateUser(this.formModel.id, this.formModel).subscribe(() => {
         this.loadUsers();
         this.closeModal(form);
         this.isEditing = false;
       });
     } else {
-      // CREATE
+      /*       CREATE */
       const { id, ...userData } = this.formModel;
       this.service.createUser(userData as Omit<User, 'id'>).subscribe(() => {
         this.loadUsers();
