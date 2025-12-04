@@ -5,7 +5,6 @@
     </div>
 
     <div class="row mb-4 align-items-center g-3">
-      <!-- Card Buscar -->
       <div class="col-auto">
         <div class="card shadow-sm toolbar-card">
           <div class="card-body py-2 px-3">
@@ -25,15 +24,7 @@
                   />
                 </div>
               </div>
-              <!-- Mostrar -->
-              <div class="col-12 col-md-auto">
-                <label class="form-label small text-muted mb-1">Mostrar</label>
-                <select class="form-select form-select-sm" style="min-width: 150px">
-                  <option value="" selected>Todos</option>
-                  <option value="activos">Solo activos</option>
-                  <option value="inactivos">Solo inactivos</option>
-                </select>
-              </div>
+              
             </div>
           </div>
         </div>
@@ -49,7 +40,7 @@
         </button>
       </div>
     </div>
-    <!--   card tabla -->
+
     <div class="card shadow-sm table-card">
       <div class="table-card-header d-flex align-items-center justify-content-between px-3 px-md-4">
         <div class="d-flex align-items-center gap-2">
@@ -165,6 +156,7 @@
     </div>
   </div>
 </div>
+
 <div class="custom-modal-backdrop" *ngIf="modalVisible">
   <div class="modal d-block" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -189,7 +181,7 @@
             (click)="closeModal(userForm)"
           ></button>
         </div>
-        <form #userForm="ngForm" (ngSubmit)="saveUser(userForm)">
+        <form #userForm="ngForm" novalidate (submit)="onSubmit(userForm, $event)">
           <div class="modal-body">
             <div class="mb-3" [ngClass]="{ 'has-error': isFieldInvalid(userForm, 'name') }">
               <label class="form-label fw-semibold">Nombre completo</label>
@@ -255,6 +247,7 @@
             <button type="button" class="btn btn-outline-secondary" (click)="closeModal(userForm)">
               Cancelar
             </button>
+
             <button
               type="submit"
               class="btn custom-btn fw-semibold"

@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ServEventosJson } from '../../../services/ServEventosJson';
 import { User } from '../../../models/User';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Dialog } from '../../../shared/dialog/dialog'; 
 
 @Component({
   selector: 'app-users-crud',
@@ -26,7 +28,10 @@ export class UsersCrud {
   isEditing = false;
   modalVisible = false;
 
-  constructor(private service: ServEventosJson) {}
+  constructor(
+    private service: ServEventosJson,
+    private modalService: NgbModal 
+  ) {}
 
   ngOnInit() {
     this.loadUsers();
@@ -86,8 +91,23 @@ export class UsersCrud {
     return this.isFormValid(form);
   }
 
-  /*     MODAL / CRUD
-   */
+  /*  DIALOG REUTILIZABLE  */
+
+  private showMessageDialog(title: string, message: string): void {
+    const modalRef = this.modalService.open(Dialog, {
+      centered: true,
+      backdrop: 'static',
+      keyboard: false, 
+    });
+
+    modalRef.componentInstance.data = {
+      title,
+      message,
+      showCancel: false,
+      confirmText: 'Aceptar',
+    };
+  }
+
 
   openCreateModal() {
     this.isEditing = false;
@@ -125,13 +145,17 @@ export class UsersCrud {
         this.loadUsers();
         this.closeModal(form);
         this.isEditing = false;
+
+        this.showMessageDialog('Usuario actualizado', 'El usuario se actualizó correctamente.');
       });
     } else {
-      /*       CREATE */
+      /* CREATE */
       const { id, ...userData } = this.formModel;
       this.service.createUser(userData as Omit<User, 'id'>).subscribe(() => {
         this.loadUsers();
         this.closeModal(form);
+
+        this.showMessageDialog('Usuario creado', 'El usuario se creó correctamente.');
       });
     }
   }
@@ -142,6 +166,12 @@ export class UsersCrud {
 
     this.service.deleteUser(id).subscribe(() => {
       this.loadUsers();
+
+      this.showMessageDialog('Usuario eliminado', 'El usuario se eliminó correctamente.');
     });
+  }
+  onSubmit(form: NgForm, event: Event) {
+    event.preventDefault(); 
+    this.saveUser(form); 
   }
 }
