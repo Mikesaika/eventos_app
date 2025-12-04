@@ -123,7 +123,7 @@
       "name": "Carlos Perez",
       "email": "gcastroagudo2000@gmail.com",
       "role": "Cliente",
-      "active": true
+      "active": false
     },
     {
       "id": "cb78",

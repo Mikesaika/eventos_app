@@ -14,7 +14,6 @@
                 <label class="form-label small text-muted mb-1">Buscar</label>
                 <div class="input-group input-group-sm" style="min-width: 230px">
                   <span class="input-group-text"> <i class="bi bi-search"></i> </span>
-
                   <input
                     type="text"
                     class="form-control"
@@ -24,7 +23,6 @@
                   />
                 </div>
               </div>
-              
             </div>
           </div>
         </div>
@@ -96,7 +94,7 @@
                     type="button"
                     class="btn btn-outline-secondary btn-sm rounded-circle"
                     title="Ver usuario"
-                    (click)="openEditModal(u)"
+                    (click)="openViewModal(u)"
                   >
                     <i class="bi bi-eye"></i>
                   </button>
@@ -257,6 +255,45 @@
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- MODAL "VER USUARIO" TABLA REUTILIZABLE -->
+<div class="custom-modal-backdrop" *ngIf="viewModalVisible">
+  <div class="modal d-block" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content shadow-lg border-0">
+      
+        <div class="modal-header modal-header-pastel">
+          <div>
+            <h5 class="modal-title mb-0">Detalle del usuario</h5>
+            <small class="d-block text-muted">
+              Visualiza la información del usuario en la tabla.
+            </small>
+          </div>
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="Close"
+            (click)="closeViewModal()"
+          ></button>
+        </div>
+
+        <div class="modal-body">
+          <app-table-reutilizable
+            [data]="viewTableData"
+            [columns]="viewTableColumns"
+            [headers]="viewTableHeaders"
+          >
+          </app-table-reutilizable>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" (click)="closeViewModal()">
+            Cerrar
+          </button>
+        </div>
       </div>
     </div>
   </div>
