@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { NgIf, CurrencyPipe, UpperCasePipe } from '@angular/common';
-
 import { ServEventosJson } from '../../../services/ServEventosJson';
 import { Service } from '../../../models/Service';
 import { Category } from '../../../models/Category';

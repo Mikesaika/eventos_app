@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgFor, NgIf, NgClass, TitleCasePipe, CurrencyPipe } from '@angular/common';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -7,8 +7,9 @@ import { Category } from '../../models/Category';
 import { Company } from '../../models/Company';
 import { ServEventosJson } from '../../services/ServEventosJson';
 import { Dialog } from '../../shared/dialog/dialog';
+import { NotificationService } from '../../services/notification.service';
+import { NotificationComponent } from '../../shared/notification/notification';
 
-// Se declara la variable de Bootstrap globalmente para el modal nativo
 declare const bootstrap: any;
 
 @Component({
@@ -20,32 +21,29 @@ declare const bootstrap: any;
     NgFor,
     NgClass,
     TitleCasePipe,
-    CurrencyPipe
+    CurrencyPipe,
+    NotificationComponent
   ],
   templateUrl: './services-crud.html',
   styleUrls: ['./services-crud.css']
 })
-export class ServicesCrud implements OnInit {
-
-  // Listas de datos
+export class ServicesCrud implements OnInit, AfterViewInit {
   services: Service[] = [];
-  allServices: Service[] = []; // Copia de seguridad para el buscador
+  allServices: Service[] = [];
   categories: Category[] = [];
   companies: Company[] = [];
-
-  // Variables del formulario y modal
+  // Formulario y Modal
   formService!: FormGroup;
   editingId: string | null = null;
-  modalRef: any; // Referencia al modal de Bootstrap
-
+  modalRef: any;
   @ViewChild('serviceModalRef') modalElement!: ElementRef;
 
   constructor(
     private miServicio: ServEventosJson,
     private fb: FormBuilder,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private notify: NotificationService
   ) {
-    // Inicialización del formulario con validaciones
     this.formService = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(100)]],
       description: ['', Validators.required],
@@ -65,40 +63,37 @@ export class ServicesCrud implements OnInit {
   }
 
   ngAfterViewInit() {
-    // se inicializa el modal nativo de Bootstrap
     if (typeof bootstrap !== 'undefined') {
       this.modalRef = new bootstrap.Modal(this.modalElement.nativeElement);
     } else {
-      console.error('Bootstrap no está cargado. Revisa tu angular.json');
+      console.error('Bootstrap no está cargado.');
     }
   }
 
-  // ===== CARGA DE DATOS =====
+  // CARGA DE DATOS 
   loadServices(): void {
-    this.miServicio.getServices().subscribe((data) => {
-      this.services = data;
-      this.allServices = data; // Guardamos la copia para buscar
+    this.miServicio.getServices().subscribe({
+      next: (data) => {
+        this.services = data;
+        this.allServices = data;
+      },
+      error: (e) => this.notify.show('Error al cargar servicios', 'error')
     });
   }
 
   loadCategories(): void {
-    this.miServicio.getCategories().subscribe((data) => {
-      this.categories = data;
-    });
+    this.miServicio.getCategories().subscribe(data => this.categories = data);
   }
 
   loadCompanies(): void {
-    this.miServicio.getCompanies().subscribe((data) => {
-      this.companies = data;
-    });
+    this.miServicio.getCompanies().subscribe(data => this.companies = data);
   }
 
-  //BUSQUEDA 
+  // BUSQUEDA 
   search(input: HTMLInputElement) {
     const term = input.value.toLowerCase();
-
     if (!term) {
-      this.services = this.allServices; // Si está vacío se mostrara todo
+      this.services = this.allServices;
     } else {
       this.services = this.allServices.filter(s =>
         s.name.toLowerCase().includes(term) ||
@@ -106,7 +101,6 @@ export class ServicesCrud implements OnInit {
       );
     }
   }
-
   getCategoryName(id: number): string {
     const cat = this.categories.find(c => Number(c.id) === Number(id));
     return cat ? cat.name : 'Sin Categoría';
@@ -118,8 +112,24 @@ export class ServicesCrud implements OnInit {
   }
 
   handleImageError(event: any) {
+    // Fallback si la imagen falla
     event.target.src = 'https://via.placeholder.com/50';
   }
+
+  //HELPER VALIDATORS 
+  // Devuelve true si el campo es inválido Y el usuario lo ha tocado o modificado
+  isFieldInvalid(field: string): boolean {
+    const control = this.formService.get(field);
+    return control ? control.invalid && (control.dirty || control.touched) : false;
+  }
+
+  // Devuelve true si el campo tiene un error específico
+  getFieldError(field: string, error: string): boolean {
+    const control = this.formService.get(field);
+    return control ? control.hasError(error) : false;
+  }
+
+  // MODALES
   openNew() {
     this.editingId = null;
     this.formService.reset({ active: true, price: 0 });
@@ -132,11 +142,12 @@ export class ServicesCrud implements OnInit {
     this.modalRef.show();
   }
 
+  // GUARDAR
   save() {
-    // Verifica
     if (this.formService.invalid) {
-      this.formService.markAllAsTouched(); // Marca los campos en rojo
-      alert('Por favor completa todos los campos obligatorios');
+      // Esto dispara la validación visual en todos los campos
+      this.formService.markAllAsTouched();
+      this.notify.show('Por favor completa los campos obligatorios', 'error');
       return;
     }
 
@@ -149,25 +160,26 @@ export class ServicesCrud implements OnInit {
       const serviceUpdate: Service = { ...datos, id: this.editingId };
       this.miServicio.updateService(serviceUpdate).subscribe({
         next: () => {
-          alert("Servicio actualizado correctamente");
+          this.notify.show('Servicio actualizado correctamente', 'success');
           this.modalRef.hide();
           this.loadServices();
         },
-        error: (err) => alert("Error al actualizar: " + err.message)
+        error: (err) => this.notify.show("Error al actualizar: " + err.message, 'error')
       });
     } else {
       // CREAR
       this.miServicio.createService(datos).subscribe({
         next: () => {
-          alert("Servicio creado exitosamente");
+          this.notify.show('Servicio creado exitosamente', 'success');
           this.modalRef.hide();
           this.loadServices();
         },
-        error: (err) => alert("Error al crear: " + err.message)
+        error: (err) => this.notify.show("Error al crear: " + err.message, 'error')
       });
     }
   }
 
+  // ELIMINAR
   delete(service: Service) {
     const modalRef = this.modalService.open(Dialog);
 
@@ -178,12 +190,14 @@ export class ServicesCrud implements OnInit {
 
     modalRef.result.then((result) => {
       if (result === true && service.id) {
-        this.miServicio.deleteService(service.id).subscribe(() => {
-          this.loadServices(); // Recargara la tabla
+        this.miServicio.deleteService(service.id).subscribe({
+          next: () => {
+            this.notify.show('Servicio eliminado correctamente', 'success');
+            this.loadServices();
+          },
+          error: (e) => this.notify.show('Error al eliminar servicio', 'error')
         });
       }
-    }).catch(() => {
-      // Si el usuario cierra o cancela
-    });
+    }).catch(() => { });
   }
 }

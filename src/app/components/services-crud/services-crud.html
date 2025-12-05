@@ -110,18 +110,26 @@
                 type="text" 
                 class="form-control" 
                 formControlName="name" 
-                [class.is-invalid]="formService.get('name')?.invalid && formService.get('name')?.touched"
+                [class.is-invalid]="isFieldInvalid('name')"
               >
-              <div class="invalid-feedback">El nombre es requerido.</div>
+              <div class="invalid-feedback">
+                <span *ngIf="getFieldError('name', 'required')">El nombre es requerido.</span>
+                <span *ngIf="getFieldError('name', 'maxlength')">Máximo 100 caracteres.</span>
+              </div>
             </div>
+
             <div class="col-md-4">
               <label class="form-label">Precio <span class="text-danger">*</span></label>
               <input 
                 type="number" 
                 class="form-control" 
                 formControlName="price"
-                [class.is-invalid]="formService.get('price')?.invalid && formService.get('price')?.touched"
+                [class.is-invalid]="isFieldInvalid('price')"
               >
+              <div class="invalid-feedback">
+                <span *ngIf="getFieldError('price', 'required')">El precio es requerido.</span>
+                <span *ngIf="getFieldError('price', 'min')">No puede ser negativo.</span>
+              </div>
             </div>
           </div>
 
@@ -129,18 +137,25 @@
             <div class="col-md-6">
               <label class="form-label">Categoría <span class="text-danger">*</span></label>
               <select class="form-select" formControlName="categoryId" 
-                [class.is-invalid]="formService.get('categoryId')?.invalid && formService.get('categoryId')?.touched">
+                [class.is-invalid]="isFieldInvalid('categoryId')">
                 <option value="">Seleccione...</option>
                 <option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</option>
               </select>
+              <div class="invalid-feedback">
+                Selecciona una categoría.
+              </div>
             </div>
+
             <div class="col-md-6">
               <label class="form-label">Empresa Proveedora <span class="text-danger">*</span></label>
               <select class="form-select" formControlName="companyId"
-                [class.is-invalid]="formService.get('companyId')?.invalid && formService.get('companyId')?.touched">
+                [class.is-invalid]="isFieldInvalid('companyId')">
                 <option value="">Seleccione...</option>
                 <option *ngFor="let co of companies" [value]="co.id">{{ co.name }}</option>
               </select>
+              <div class="invalid-feedback">
+                Selecciona una empresa.
+              </div>
             </div>
           </div>
 
@@ -148,25 +163,34 @@
             <div class="col-md-4">
               <label class="form-label">Clasificación <span class="text-danger">*</span></label>
               <select class="form-select" formControlName="classification"
-                [class.is-invalid]="formService.get('classification')?.invalid && formService.get('classification')?.touched">
+                [class.is-invalid]="isFieldInvalid('classification')">
                 <option value="">Seleccione...</option>
                 <option value="plata">Plata</option>
                 <option value="oro">Oro</option>
                 <option value="diamante">Diamante</option>
               </select>
+              <div class="invalid-feedback">
+                La clasificación es requerida.
+              </div>
             </div>
+
             <div class="col-md-8">
               <label class="form-label">URL de Imagen <span class="text-danger">*</span></label>
               <input type="text" class="form-control" formControlName="image" placeholder="https://..."
-                [class.is-invalid]="formService.get('image')?.invalid && formService.get('image')?.touched">
-              <div class="invalid-feedback">La URL de la imagen es requerida.</div>
+                [class.is-invalid]="isFieldInvalid('image')">
+              <div class="invalid-feedback">
+                La URL de la imagen es requerida.
+              </div>
             </div>
           </div>
 
           <div class="mb-3">
             <label class="form-label">Descripción <span class="text-danger">*</span></label>
             <textarea class="form-control" rows="3" formControlName="description"
-              [class.is-invalid]="formService.get('description')?.invalid && formService.get('description')?.touched"></textarea>
+              [class.is-invalid]="isFieldInvalid('description')"></textarea>
+            <div class="invalid-feedback">
+              La descripción es requerida.
+            </div>
           </div>
 
           <div class="form-check mb-3">
@@ -188,3 +212,5 @@
     </div>
   </div>
 </div>
+
+<app-notification></app-notification>

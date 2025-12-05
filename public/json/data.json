@@ -1,7 +1,6 @@
 {
   "services": [
     {
-      "id": "1",
       "name": "Salón Real Versalles",
       "description": "Salón amplio para 200 personas con aire acondicionado.",
       "categoryId": 1,
@@ -9,7 +8,8 @@
       "price": 1500,
       "image": "https://st4.depositphotos.com/38538500/39584/i/1600/depositphotos_395840042-stock-photo-versailles-france-2020-royal-salon.jpg",
       "classification": "diamante",
-      "active": true
+      "active": true,
+      "id": "1"
     },
     {
       "id": "2",
@@ -146,13 +146,6 @@
     {
       "id": "051e",
       "name": "migue",
-      "email": "miguel@gmail.com",
-      "role": "Administrador",
-      "active": true
-    },
-    {
-      "id": "a600",
-      "name": "Miguel Nuñez",
       "email": "miguel@gmail.com",
       "role": "Administrador",
       "active": true

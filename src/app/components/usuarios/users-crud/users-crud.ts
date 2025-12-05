@@ -1,21 +1,31 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+
+// Modelos y Servicios
 import { ServEventosJson } from '../../../services/ServEventosJson';
 import { User } from '../../../models/User';
+import { NotificationService } from '../../../services/notification.service';
 
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+// Componentes Compartidos
 import { Dialog } from '../../../shared/dialog/dialog';
 import { TableReutilizable } from '../../../shared/table-reutilizable/table-reutilizable';
+import { NotificationComponent } from '../../../shared/notification/notification';
 
 @Component({
   selector: 'app-users-crud',
   standalone: true,
-  imports: [CommonModule, FormsModule, TableReutilizable],
+  imports: [
+    CommonModule,
+    FormsModule,
+    TableReutilizable,
+    NotificationComponent
+  ],
   templateUrl: './users-crud.html',
   styleUrl: './users-crud.css',
 })
-export class UsersCrud {
+export class UsersCrud implements OnInit {
   users: User[] = [];
   filteredUsers: User[] = [];
   searchTerm: string = '';
@@ -36,16 +46,23 @@ export class UsersCrud {
   viewTableColumns: string[] = ['id', 'name', 'email', 'role', 'estado'];
   viewTableHeaders: string[] = ['ID', 'Nombre', 'Correo', 'Rol', 'Estado'];
 
-  constructor(private service: ServEventosJson, private modalService: NgbModal) {}
+  constructor(
+    private service: ServEventosJson,
+    private modalService: NgbModal,
+    private notify: NotificationService // <--- INYECTAR SERVICIO
+  ) { }
 
   ngOnInit() {
     this.loadUsers();
   }
 
   loadUsers() {
-    this.service.getUsers().subscribe((data) => {
-      this.users = data;
-      this.filteredUsers = data;
+    this.service.getUsers().subscribe({
+      next: (data) => {
+        this.users = data;
+        this.filteredUsers = data;
+      },
+      error: (e) => this.notify.show('Error al cargar usuarios', 'error')
     });
   }
 
@@ -59,7 +76,7 @@ export class UsersCrud {
     );
   }
 
-  /*  LÓGICA DE VALIDACIÓN  */
+  /* LÓGICA DE VALIDACIÓN  */
 
   isFieldInvalid(form: NgForm | undefined, field: keyof User): boolean {
     if (!form) return false;
@@ -95,28 +112,7 @@ export class UsersCrud {
     return this.isFormValid(form);
   }
 
-  /*  DIALOG REUTILIZABLE  */
-
-  private async showMessageDialog(title: string, message: string): Promise<void> {
-    const modalRef = this.modalService.open(Dialog, {
-      centered: true,
-      backdrop: 'static',
-      keyboard: false,
-    });
-
-    modalRef.componentInstance.data = {
-      title,
-      message,
-      showCancel: false,
-      confirmText: 'Aceptar',
-    };
-
-    try {
-      await modalRef.result;
-    } catch {}
-  }
-
-  /*  MODAL PRINCIPAL (CREAR / EDITAR)  */
+  /* MODAL PRINCIPAL (CREAR / EDITAR)  */
 
   openCreateModal() {
     this.isEditing = false;
@@ -143,55 +139,75 @@ export class UsersCrud {
   }
 
   onSubmit(form: NgForm, event: Event) {
-    event.preventDefault(); // prevenimos submit nativo
+    event.preventDefault();
     this.saveUser(form);
   }
 
-  async saveUser(form: NgForm) {
+  saveUser(form: NgForm) {
     if (!this.canSubmit(form)) {
       form.control.markAllAsTouched();
+      this.notify.show('Por favor completa el formulario correctamente', 'error');
       return;
     }
 
     if (this.isEditing && this.formModel.id) {
       // UPDATE
-      this.service.updateUser(this.formModel.id, this.formModel).subscribe(async () => {
-        this.loadUsers();
-        this.closeModal(form);
-        this.isEditing = false;
-
-        await this.showMessageDialog(
-          'Usuario actualizado',
-          'El usuario se actualizó correctamente.'
-        );
+      this.service.updateUser(this.formModel.id, this.formModel).subscribe({
+        next: () => {
+          this.loadUsers();
+          this.closeModal(form);
+          this.isEditing = false;
+          this.notify.show('Usuario actualizado correctamente', 'success');
+        },
+        error: (err) => this.notify.show('Error al actualizar: ' + err.message, 'error')
       });
     } else {
       // CREATE
       const { id, ...userData } = this.formModel;
-      this.service.createUser(userData as Omit<User, 'id'>).subscribe(async () => {
-        this.loadUsers();
-        this.closeModal(form);
-
-        await this.showMessageDialog('Usuario creado', 'El usuario se creó correctamente.');
+      this.service.createUser(userData as Omit<User, 'id'>).subscribe({
+        next: () => {
+          this.loadUsers();
+          this.closeModal(form);
+          this.notify.show('Usuario creado exitosamente', 'success');
+        },
+        error: (err) => this.notify.show('Error al crear: ' + err.message, 'error')
       });
     }
   }
 
-  async deleteUser(id: string | undefined) {
+
+  deleteUser(id: string | undefined) {
     if (!id) return;
-    if (!confirm('¿Deseas eliminar este usuario?')) return;
 
-    this.service.deleteUser(id).subscribe(async () => {
-      this.loadUsers();
-
-      await this.showMessageDialog('Usuario eliminado', 'El usuario se eliminó correctamente.');
+    const modalRef = this.modalService.open(Dialog, {
+      centered: true,
+      backdrop: 'static',
+      keyboard: false,
     });
+
+    modalRef.componentInstance.data = {
+      title: 'Eliminar Usuario',
+      message: '¿Estás seguro de que deseas eliminar este usuario?',
+      showCancel: true,
+    };
+
+    modalRef.result.then((result) => {
+      if (result === true) {
+        this.service.deleteUser(id).subscribe({
+          next: () => {
+            this.loadUsers();
+            this.notify.show('Usuario eliminado correctamente', 'success');
+          },
+          error: (err) => this.notify.show('Error al eliminar', 'error')
+        });
+      }
+    }).catch(() => { });
   }
 
-  /*  MODAL TABLE-REUTILIZABLE  */
+  //MODAL TABLE-REUTILIZABLE  //
 
   openViewModal(user: User) {
-    // Mostramos solo ese usuario en la tabla
+    // solo ese usuario en la tabla
     const userConEstado = {
       ...user,
       estado: user.active ? 'Activo' : 'Inactivo',
