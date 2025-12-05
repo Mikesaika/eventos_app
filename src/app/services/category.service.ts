@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Category } from '../models/category';
+import { Category } from '../models/Category';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -10,7 +10,7 @@ export class CategoryService {
   // Ajusta la URL si usas json-server o endpoint real
   private baseUrl = 'http://localhost:3000/categories';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   list(): Observable<Category[]> {
     return this.http.get<Category[]>(this.baseUrl);
