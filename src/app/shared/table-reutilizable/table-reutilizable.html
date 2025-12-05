@@ -1,0 +1,20 @@
+
+<table class="table">
+ <thead>
+  <tr>
+    <th *ngFor="let column of columns; let i = index" (click)="sortData(column)">
+      {{ displayedHeaders[i] }}
+    </th>
+  </tr>
+</thead>
+  <tbody>
+    <tr *ngFor="let item of paginatedData">
+      <td *ngFor="let column of columns">{{ item[column] }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="pagination">
+  <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">Anterior</button>
+  <button (click)="onPageChange(currentPage + 1)" [disabled]="currentPage * pageSize >= data.length">Siguiente</button>
+</div>

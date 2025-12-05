@@ -116,24 +116,38 @@
   ],
   "users": [
     {
-      "id": "2",
-      "name": "Maria Lopez",
-      "email": "maria@hotmail.com",
-      "role": "cliente",
-      "active": false
+      "id": "3ec8",
+      "name": "Carlos Perez",
+      "email": "gcastroagudo2000@gmail.com",
+      "role": "Proveedor",
+      "active": true
     },
     {
-      "id": "3",
-      "name": "Jorge Ramirez",
-      "email": "jorge@yahoo.com",
+      "id": "7d02",
+      "name": "Carlos Perez",
+      "email": "gcastroagudo2000@gmail.com",
       "role": "Cliente",
       "active": true
     },
     {
-      "id": "4",
+      "id": "d990",
       "name": "Carlos Perez",
-      "email": "ric.castro.alv@gmail.com",
+      "email": "gcastroagudo2000@gmail.com",
       "role": "Cliente",
+      "active": false
+    },
+    {
+      "id": "cb78",
+      "name": "Carlos Perez",
+      "email": "gcastroagudo2000@gmail.com",
+      "role": "Administrador",
+      "active": true
+    },
+    {
+      "id": "051e",
+      "name": "migue",
+      "email": "miguel@gmail.com",
+      "role": "Administrador",
       "active": true
     },
     {

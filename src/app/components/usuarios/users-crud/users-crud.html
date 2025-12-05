@@ -5,7 +5,6 @@
     </div>
 
     <div class="row mb-4 align-items-center g-3">
-      <!-- Card Buscar -->
       <div class="col-auto">
         <div class="card shadow-sm toolbar-card">
           <div class="card-body py-2 px-3">
@@ -15,7 +14,6 @@
                 <label class="form-label small text-muted mb-1">Buscar</label>
                 <div class="input-group input-group-sm" style="min-width: 230px">
                   <span class="input-group-text"> <i class="bi bi-search"></i> </span>
-
                   <input
                     type="text"
                     class="form-control"
@@ -24,15 +22,6 @@
                     (ngModelChange)="filterUsers()"
                   />
                 </div>
-              </div>
-              <!-- Mostrar -->
-              <div class="col-12 col-md-auto">
-                <label class="form-label small text-muted mb-1">Mostrar</label>
-                <select class="form-select form-select-sm" style="min-width: 150px">
-                  <option value="" selected>Todos</option>
-                  <option value="activos">Solo activos</option>
-                  <option value="inactivos">Solo inactivos</option>
-                </select>
               </div>
             </div>
           </div>
@@ -49,7 +38,7 @@
         </button>
       </div>
     </div>
-    <!--   card tabla -->
+
     <div class="card shadow-sm table-card">
       <div class="table-card-header d-flex align-items-center justify-content-between px-3 px-md-4">
         <div class="d-flex align-items-center gap-2">
@@ -105,7 +94,7 @@
                     type="button"
                     class="btn btn-outline-secondary btn-sm rounded-circle"
                     title="Ver usuario"
-                    (click)="openEditModal(u)"
+                    (click)="openViewModal(u)"
                   >
                     <i class="bi bi-eye"></i>
                   </button>
@@ -165,6 +154,7 @@
     </div>
   </div>
 </div>
+
 <div class="custom-modal-backdrop" *ngIf="modalVisible">
   <div class="modal d-block" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -189,7 +179,7 @@
             (click)="closeModal(userForm)"
           ></button>
         </div>
-        <form #userForm="ngForm" (ngSubmit)="saveUser(userForm)">
+        <form #userForm="ngForm" novalidate (submit)="onSubmit(userForm, $event)">
           <div class="modal-body">
             <div class="mb-3" [ngClass]="{ 'has-error': isFieldInvalid(userForm, 'name') }">
               <label class="form-label fw-semibold">Nombre completo</label>
@@ -255,6 +245,7 @@
             <button type="button" class="btn btn-outline-secondary" (click)="closeModal(userForm)">
               Cancelar
             </button>
+
             <button
               type="submit"
               class="btn custom-btn fw-semibold"
@@ -264,6 +255,45 @@
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- MODAL "VER USUARIO" TABLA REUTILIZABLE -->
+<div class="custom-modal-backdrop" *ngIf="viewModalVisible">
+  <div class="modal d-block" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content shadow-lg border-0">
+      
+        <div class="modal-header modal-header-pastel">
+          <div>
+            <h5 class="modal-title mb-0">Detalle del usuario</h5>
+            <small class="d-block text-muted">
+              Visualiza la información del usuario en la tabla.
+            </small>
+          </div>
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="Close"
+            (click)="closeViewModal()"
+          ></button>
+        </div>
+
+        <div class="modal-body">
+          <app-table-reutilizable
+            [data]="viewTableData"
+            [columns]="viewTableColumns"
+            [headers]="viewTableHeaders"
+          >
+          </app-table-reutilizable>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" (click)="closeViewModal()">
+            Cerrar
+          </button>
+        </div>
       </div>
     </div>
   </div>
