@@ -131,6 +131,13 @@
       "email": "gcastroagudo2000@gmail.com",
       "role": "Administrador",
       "active": true
+    },
+    {
+      "id": "051e",
+      "name": "migue",
+      "email": "miguel@gmail.com",
+      "role": "Administrador",
+      "active": true
     }
   ],
   "orders": [
