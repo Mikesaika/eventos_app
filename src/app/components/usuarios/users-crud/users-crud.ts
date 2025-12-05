@@ -4,7 +4,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 // Modelos y Servicios
-import { ServEventosJson } from '../../../services/ServEventosJson';
+import { UserService } from '../../../services/user.service';
 import { User } from '../../../models/User';
 import { NotificationService } from '../../../services/notification.service';
 
@@ -47,7 +47,7 @@ export class UsersCrud implements OnInit {
   viewTableHeaders: string[] = ['ID', 'Nombre', 'Correo', 'Rol', 'Estado'];
 
   constructor(
-    private service: ServEventosJson,
+    private service: UserService,
     private modalService: NgbModal,
     private notify: NotificationService // <--- INYECTAR SERVICIO
   ) { }

@@ -149,6 +149,13 @@
       "email": "miguel@gmail.com",
       "role": "Administrador",
       "active": true
+    },
+    {
+      "id": "7458",
+      "name": "Miguel Nuñez",
+      "email": "miguel@gmail.com",
+      "role": "Administrador",
+      "active": true
     }
   ],
   "orders": [
