@@ -1,39 +1,45 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+</head>
+
+</html>
 <nav class="navbar navbar-expand-lg navbar-dark bg-morado">
   <div class="container">
     <a class="navbar-brand" routerLink="/eventos-list">
       EventosApp
     </a>
 
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarMain"
-    >
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarMain">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-          <a
-            class="nav-link"
-            routerLink="/eventos-list"
-            routerLinkActive="active"
-          >
+          <a class="nav-link" routerLink="/eventos-list" routerLinkActive="active">
             Catálogo
           </a>
         </li>
-        
+      
         <li class="nav-item">
           <a
             class="nav-link"
             routerLink="/services-crud"
             routerLinkActive="active"
           >
-            Administrar Servicios
+            Servicios
           </a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/usuarios" routerLinkActive="active">
+            Usuarios
+          </a>
+
       </ul>
     </div>
   </div>
@@ -44,3 +50,5 @@
     <router-outlet></router-outlet>
   </div>
 </main>   
+
+

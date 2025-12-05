@@ -1,0 +1,270 @@
+<div class="usuarios-wrapper py-4">
+  <div class="container">
+    <div class="mb-4">
+      <h2 class="fw-bold mb-1">Gestión de usuarios</h2>
+    </div>
+
+    <div class="row mb-4 align-items-center g-3">
+      <!-- Card Buscar -->
+      <div class="col-auto">
+        <div class="card shadow-sm toolbar-card">
+          <div class="card-body py-2 px-3">
+            <div class="row g-3 align-items-end">
+              <!-- Buscar -->
+              <div class="col-12 col-md-auto">
+                <label class="form-label small text-muted mb-1">Buscar</label>
+                <div class="input-group input-group-sm" style="min-width: 230px">
+                  <span class="input-group-text"> <i class="bi bi-search"></i> </span>
+
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Nombre o correo"
+                    [(ngModel)]="searchTerm"
+                    (ngModelChange)="filterUsers()"
+                  />
+                </div>
+              </div>
+              <!-- Mostrar -->
+              <div class="col-12 col-md-auto">
+                <label class="form-label small text-muted mb-1">Mostrar</label>
+                <select class="form-select form-select-sm" style="min-width: 150px">
+                  <option value="" selected>Todos</option>
+                  <option value="activos">Solo activos</option>
+                  <option value="inactivos">Solo inactivos</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--   Botón agregar  -->
+      <div class="col-auto ms-auto">
+        <button
+          type="button"
+          class="btn custom-btn px-4 shadow-sm rounded-pill d-inline-flex align-items-center gap-2"
+          (click)="openCreateModal()"
+        >
+          <i class="bi bi-plus-lg"></i> <span class="fw-semibold">Nuevo usuario</span>
+        </button>
+      </div>
+    </div>
+    <!--   card tabla -->
+    <div class="card shadow-sm table-card">
+      <div class="table-card-header d-flex align-items-center justify-content-between px-3 px-md-4">
+        <div class="d-flex align-items-center gap-2">
+          <div class="icon-circle bg-white"><i class="bi bi-people-fill"></i></div>
+          <div>
+            <h6 class="mb-0 fw-bold">Usuarios registrados</h6>
+          </div>
+        </div>
+        <span class="badge bg-secondary-subtle text-primary-emphasis border border-primary-subtle">
+          {{ filteredUsers.length }} registros
+        </span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table mb-0 align-middle usuarios-table">
+          <thead>
+            <tr>
+              <th scope="col">Nombre</th>
+              <th scope="col">Correo</th>
+              <th scope="col">Rol</th>
+              <th scope="col" class="text-center">Estado</th>
+              <th scope="col" class="text-center" style="width: 160px">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let u of filteredUsers">
+              <td>
+                <div class="fw-semibold">{{ u.name }}</div>
+                <div class="small text-muted">{{ u.id || '—' }}</div>
+              </td>
+              <td>
+                <span class="small text-muted">{{ u.email }}</span>
+              </td>
+              <td>
+                <span class="badge rounded-pill bg-info-subtle text-info-emphasis">
+                  {{ u.role }}
+                </span>
+              </td>
+              <td class="text-center">
+                <span
+                  class="badge rounded-pill px-3 py-1 estado-pill"
+                  [class.bg-success-subtle]="u.active"
+                  [class.text-success]="u.active"
+                  [class.bg-secondary-subtle]="!u.active"
+                  [class.text-secondary]="!u.active"
+                >
+                  {{ u.active ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+              <td class="text-center">
+                <div class="d-flex justify-content-center gap-2">
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary btn-sm rounded-circle"
+                    title="Ver usuario"
+                    (click)="openEditModal(u)"
+                  >
+                    <i class="bi bi-eye"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary btn-sm rounded-circle"
+                    title="Editar usuario"
+                    (click)="openEditModal(u)"
+                  >
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-danger btn-sm rounded-circle"
+                    title="Eliminar usuario"
+                    (click)="deleteUser(u.id)"
+                  >
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="filteredUsers.length === 0">
+              <td colspan="5" class="text-center py-4">
+                <div class="text-muted mb-1">No se encontraron usuarios.</div>
+                <small class="text-muted">
+                  Ajusta los filtros o limpia el campo de búsqueda.
+                </small>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div
+        class="card-footer d-flex flex-column flex-md-row justify-content-between align-items-center gap-2"
+      >
+        <div class="d-flex align-items-center gap-2">
+          <span class="small text-muted">Filas por página:</span>
+          <select class="form-select form-select-sm" style="width: auto">
+            <option selected>10</option>
+            <option>25</option>
+            <option>50</option>
+          </select>
+        </div>
+        <nav aria-label="Paginación" class="mt-1 mt-md-0">
+          <ul class="pagination pagination-sm mb-0">
+            <li class="page-item disabled"><button class="page-link">First</button></li>
+            <li class="page-item disabled"><button class="page-link">&laquo;</button></li>
+            <li class="page-item active"><button class="page-link">1</button></li>
+            <li class="page-item"><button class="page-link">2</button></li>
+            <li class="page-item"><button class="page-link">3</button></li>
+            <li class="page-item"><button class="page-link">&raquo;</button></li>
+            <li class="page-item"><button class="page-link">Last</button></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="custom-modal-backdrop" *ngIf="modalVisible">
+  <div class="modal d-block" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content shadow-lg border-0">
+        <div class="modal-header modal-header-pastel">
+          <div>
+            <h5 class="modal-title mb-0">
+              {{ isEditing ? 'Editar usuario' : 'Registrar nuevo usuario' }}
+            </h5>
+            <small class="d-block text-muted">
+              {{
+                isEditing
+                  ? 'Actualiza los datos del usuario seleccionado.'
+                  : 'Completa el formulario para crear un nuevo usuario.'
+              }}
+            </small>
+          </div>
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="Close"
+            (click)="closeModal(userForm)"
+          ></button>
+        </div>
+        <form #userForm="ngForm" (ngSubmit)="saveUser(userForm)">
+          <div class="modal-body">
+            <div class="mb-3" [ngClass]="{ 'has-error': isFieldInvalid(userForm, 'name') }">
+              <label class="form-label fw-semibold">Nombre completo</label>
+              <input
+                type="text"
+                class="form-control"
+                name="name"
+                [(ngModel)]="formModel.name"
+                required
+                placeholder="Ej. Carlos Pérez"
+                [ngClass]="{ 'is-invalid': isFieldInvalid(userForm, 'name') }"
+              />
+              <small class="text-danger d-block mt-1" *ngIf="isFieldInvalid(userForm, 'name')">
+                {{ getFieldError('name', userForm) }}
+              </small>
+            </div>
+            <div class="mb-3" [ngClass]="{ 'has-error': isFieldInvalid(userForm, 'email') }">
+              <label class="form-label fw-semibold">Correo electrónico</label>
+              <input
+                type="email"
+                class="form-control"
+                name="email"
+                [(ngModel)]="formModel.email"
+                required
+                email
+                placeholder="usuario@correo.com"
+                [ngClass]="{ 'is-invalid': isFieldInvalid(userForm, 'email') }"
+              />
+              <small class="text-danger d-block mt-1" *ngIf="isFieldInvalid(userForm, 'email')">
+                {{ getFieldError('email', userForm) }}
+              </small>
+            </div>
+            <div class="mb-3" [ngClass]="{ 'has-error': isFieldInvalid(userForm, 'role') }">
+              <label class="form-label fw-semibold">Rol</label>
+              <select
+                class="form-select"
+                name="role"
+                [(ngModel)]="formModel.role"
+                required
+                [ngClass]="{ 'is-invalid': isFieldInvalid(userForm, 'role') }"
+              >
+                <option value="" disabled>Seleccione un rol</option>
+                <option value="Administrador">Administrador</option>
+                <option value="Cliente">Cliente</option>
+                <option value="Proveedor">Proveedor</option>
+              </select>
+              <small class="text-danger d-block mt-1" *ngIf="isFieldInvalid(userForm, 'role')">
+                {{ getFieldError('role', userForm) }}
+              </small>
+            </div>
+            <div class="form-check mb-1">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="active"
+                name="active"
+                [(ngModel)]="formModel.active"
+              />
+              <label class="form-check-label fw-semibold" for="active"> Usuario activo </label>
+            </div>
+          </div>
+          <div class="modal-footer d-flex justify-content-between">
+            <button type="button" class="btn btn-outline-secondary" (click)="closeModal(userForm)">
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="btn custom-btn fw-semibold"
+              [disabled]="!canSubmit(userForm)"
+            >
+              {{ isEditing ? 'Actualizar' : 'Guardar usuario' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

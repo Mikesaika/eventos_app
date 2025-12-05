@@ -1,15 +1,15 @@
 {
   "services": [
     {
-      "name": "Salon Real Versalles",
+      "id": "1",
+      "name": "Salón Real Versalles",
       "description": "Salón amplio para 200 personas con aire acondicionado.",
       "categoryId": 1,
       "companyId": 1,
       "price": 1500,
       "image": "https://st4.depositphotos.com/38538500/39584/i/1600/depositphotos_395840042-stock-photo-versailles-france-2020-royal-salon.jpg",
       "classification": "diamante",
-      "active": true,
-      "id": "1"
+      "active": true
     },
     {
       "id": "2",
@@ -34,6 +34,7 @@
       "active": true
     },
     {
+      "id": "4",
       "name": "Decoración Floral",
       "description": "Centros de mesa y arco de entrada.",
       "categoryId": 4,
@@ -41,17 +42,16 @@
       "price": 250,
       "image": "https://cdn0.matrimonio.com.pe/article-real-wedding/091/3_2/960/jpg/136253.jpeg",
       "classification": "plata",
-      "active": true,
-      "id": "4"
+      "active": false
     },
     {
-      "id": "b3e6",
+      "id": "d91e",
       "name": "Hora loca",
-      "description": "2 horas de musica y bailarines",
+      "description": "Musica por 3 horas",
       "categoryId": 3,
       "companyId": 1,
-      "price": 750,
-      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuOPjP2w2GMdI3wWJQnBEKlv-H_F4ylBAYXA&s",
+      "price": 250,
+      "image": "https://horaloca.com.do/wp-content/uploads/2025/01/hora-loca-1.jpg",
       "classification": "plata",
       "active": true
     }
@@ -116,22 +116,32 @@
   ],
   "users": [
     {
-      "id": "1",
-      "name": "Carlos Perez",
-      "email": "carlos@gmail.com",
-      "active": true
-    },
-    {
       "id": "2",
       "name": "Maria Lopez",
       "email": "maria@hotmail.com",
-      "active": true
+      "role": "cliente",
+      "active": false
     },
     {
       "id": "3",
       "name": "Jorge Ramirez",
       "email": "jorge@yahoo.com",
-      "active": false
+      "role": "Cliente",
+      "active": true
+    },
+    {
+      "id": "4",
+      "name": "Carlos Perez",
+      "email": "ric.castro.alv@gmail.com",
+      "role": "Cliente",
+      "active": true
+    },
+    {
+      "id": "a600",
+      "name": "Miguel Nuñez",
+      "email": "miguel@gmail.com",
+      "role": "Administrador",
+      "active": true
     }
   ],
   "orders": [

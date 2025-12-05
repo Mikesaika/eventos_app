@@ -47,7 +47,25 @@ export class ServEventosJson {
         return this.http.get<User[]>(this.usersUrl);
     }
 
-    // ORDERS 
+
+    getUserById(id: string): Observable<User> {
+        return this.http.get<User>(`${this.usersUrl}/${id}`);
+    }
+
+    createUser(user: Omit<User, 'id'>): Observable<User> {
+        return this.http.post<User>(this.usersUrl, user);
+    }
+
+    updateUser(id: string, user: User): Observable<User> {
+        return this.http.put<User>(`${this.usersUrl}/${id}`, user);
+    }
+
+    deleteUser(id: string): Observable<void> {
+        return this.http.delete<void>(`${this.usersUrl}/${id}`);
+    }
+
+    // ===== ORDERS =====
+
     getOrders(): Observable<Order[]> {
         return this.http.get<Order[]>(this.ordersUrl);
     }
