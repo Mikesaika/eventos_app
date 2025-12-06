@@ -116,31 +116,10 @@
   ],
   "users": [
     {
-      "id": "3ec8",
-      "name": "Carlos Perez",
-      "email": "gcastroagudo2000@gmail.com",
-      "role": "Proveedor",
-      "active": true
-    },
-    {
-      "id": "7d02",
-      "name": "Carlos Perez",
-      "email": "gcastroagudo2000@gmail.com",
-      "role": "Cliente",
-      "active": true
-    },
-    {
       "id": "d990",
       "name": "Carlos Perez",
       "email": "gcastroagudo2000@gmail.com",
       "role": "Cliente",
-      "active": false
-    },
-    {
-      "id": "cb78",
-      "name": "Carlos Perez",
-      "email": "gcastroagudo2000@gmail.com",
-      "role": "Administrador",
       "active": true
     },
     {
@@ -160,27 +139,19 @@
   ],
   "orders": [
     {
-      "id": "1",
-      "userId": 1,
-      "serviceId": 1,
-      "date": "2024-11-20",
+      "userId": "051e",
+      "serviceId": 4,
+      "date": "2026-03-08",
+      "total": 250,
+      "active": true,
+      "id": "542b"
+    },
+    {
+      "id": "e093",
+      "userId": "7458",
+      "serviceId": "1",
+      "date": "2026-03-08",
       "total": 1500,
-      "active": true
-    },
-    {
-      "id": "2",
-      "userId": 1,
-      "serviceId": 3,
-      "date": "2024-11-21",
-      "total": 400,
-      "active": true
-    },
-    {
-      "id": "3",
-      "userId": 2,
-      "serviceId": 2,
-      "date": "2024-10-05",
-      "total": 35.5,
       "active": true
     }
   ]

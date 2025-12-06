@@ -20,7 +20,7 @@ export class NotificationComponent implements OnInit {
       this.data = notification;
 
       if (notification) {
-        // Ocultar automáticamente después de 3 segundos
+        // Oculta automáticamente después de 3 segundos
         if (this.timeoutId) clearTimeout(this.timeoutId);
         this.timeoutId = setTimeout(() => this.close(), 3000);
       }

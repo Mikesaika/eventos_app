@@ -112,11 +112,10 @@ export class ServicesCrud implements OnInit, AfterViewInit {
   }
 
   handleImageError(event: any) {
-    // Fallback si la imagen falla
+    // Fallback por si la imagen falla
     event.target.src = 'https://via.placeholder.com/50';
   }
 
-  //HELPER VALIDATORS 
   // Devuelve true si el campo es inválido Y el usuario lo ha tocado o modificado
   isFieldInvalid(field: string): boolean {
     const control = this.formService.get(field);
@@ -145,7 +144,6 @@ export class ServicesCrud implements OnInit, AfterViewInit {
   // GUARDAR
   save() {
     if (this.formService.invalid) {
-      // Esto dispara la validación visual en todos los campos
       this.formService.markAllAsTouched();
       this.notify.show('Por favor completa los campos obligatorios', 'error');
       return;
@@ -154,9 +152,8 @@ export class ServicesCrud implements OnInit, AfterViewInit {
     const datos = this.formService.value;
     datos.categoryId = Number(datos.categoryId);
     datos.companyId = Number(datos.companyId);
-
+    // EDITAR
     if (this.editingId) {
-      // EDITAR
       const serviceUpdate: Service = { ...datos, id: this.editingId };
       this.miServicio.updateService(serviceUpdate).subscribe({
         next: () => {
