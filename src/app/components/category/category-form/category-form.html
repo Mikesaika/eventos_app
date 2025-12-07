@@ -1,0 +1,46 @@
+<div class="container mt-4" style="max-width: 600px;">
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0">{{ mode === 'new' ? 'Nueva Categoría' : 'Editar Categoría' }}</h4>
+    </div>
+    
+    <div class="card-body">
+      <form [formGroup]="form" (ngSubmit)="save()">
+        
+        <div class="mb-3">
+          <label class="form-label">Nombre <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" formControlName="name" 
+                 [class.is-invalid]="form.get('name')?.invalid && form.get('name')?.touched">
+          @if (form.get('name')?.hasError('required')) {
+            <div class="invalid-feedback">El nombre es requerido.</div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Descripción <span class="text-danger">*</span></label>
+          <textarea class="form-control" rows="3" formControlName="description"
+                    [class.is-invalid]="form.get('description')?.invalid && form.get('description')?.touched"></textarea>
+          <div class="invalid-feedback">La descripción es requerida.</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Icono (Clase CSS)</label>
+          <input type="text" class="form-control" formControlName="icon" placeholder="bi-tag">
+        </div>
+
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" formControlName="active" id="activeCheck">
+          <label class="form-check-label" for="activeCheck">Activo</label>
+        </div>
+
+        <div class="d-flex justify-content-between">
+          <a routerLink="/categories" class="btn btn-secondary">Cancelar</a>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<app-notification></app-notification>

@@ -5,6 +5,9 @@ import { ServicesCrud } from './components/services-crud/services-crud';
 import { UsersCrud } from './components/usuarios/users-crud/users-crud';
 import { OrderCrud } from './components/order/order-crud/order-crud';
 import { OrderList } from './components/order/order-list/order-list';
+import { CategoryListComponent } from './components/category/category-list/category-list';
+import { CategoryFormComponent } from './components/category/category-form/category-form';
+
 
 export const routes: Routes = [
     // Eventos
@@ -21,7 +24,10 @@ export const routes: Routes = [
     { path: 'order-crud', component: OrderCrud },
     { path: 'order-list', component: OrderList },
 
-    // Default y Wildcard (Solo una vez al final)
+    // categorias
+    { path: 'categories', component: CategoryListComponent },
+    { path: 'categories-form', component: CategoryFormComponent },
+
     { path: '', redirectTo: 'eventos-list', pathMatch: 'full' },
     { path: '**', redirectTo: 'eventos-list' }
 ];
