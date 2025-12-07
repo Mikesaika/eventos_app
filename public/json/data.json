@@ -91,6 +91,20 @@
       "icon": "camera_alt",
       "active": true,
       "id": "5"
+    },
+    {
+      "id": "973c",
+      "name": "limpieza",
+      "description": "conserjes encargado de la limpieza",
+      "icon": "",
+      "active": true
+    },
+    {
+      "id": "b286",
+      "name": "limpieza",
+      "description": "conserjes encargado de la limpieza",
+      "icon": "",
+      "active": true
     }
   ],
   "companies": [

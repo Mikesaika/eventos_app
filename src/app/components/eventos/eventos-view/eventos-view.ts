@@ -2,21 +2,15 @@ import { Component, ElementRef, OnInit, ViewChild, AfterViewInit } from '@angula
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CurrencyPipe, UpperCasePipe } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-
-// Modelos
 import { Service } from '../../../models/Service';
 import { Category } from '../../../models/Category';
 import { Company } from '../../../models/Company';
 import { User } from '../../../models/User';
 import { Order } from '../../../models/Order';
-
-// Servicios
 import { ServEventosJson } from '../../../services/ServEventosJson';
 import { OrderService } from '../../../services/order.service';
 import { UserService } from '../../../services/user.service';
 import { NotificationService } from '../../../services/notification.service';
-
-// Componentes
 import { NotificationComponent } from '../../../shared/notification/notification';
 
 declare const bootstrap: any;
@@ -40,8 +34,6 @@ export class EventoView implements OnInit, AfterViewInit {
   empresa?: Company;
   users: User[] = [];
   cargando: boolean = true;
-
-  // Lógica de Pedido
   formOrder!: FormGroup;
   modalRef: any;
   @ViewChild('orderModalRef') modalElement!: ElementRef;
@@ -100,7 +92,7 @@ export class EventoView implements OnInit, AfterViewInit {
     });
   }
 
-  // --- LÓGICA DEL MODAL ---
+  //  LÓGICA DEL MODAL
 
   openOrderModal() {
     if (!this.servicio) return;
@@ -124,13 +116,8 @@ export class EventoView implements OnInit, AfterViewInit {
 
     const datos = this.formOrder.value;
 
-    // --- CORRECCIÓN AQUÍ ---
-    // Convertimos solo los valores numéricos del servicio.
-    // DEJAMOS userId COMO VIENE (String o Number según el select)
     datos.serviceId = Number(this.servicio.id);
     datos.total = Number(this.servicio.price);
-
-    // Al no forzar Number(datos.userId), evitamos que se corrompa si es un string complejo.
 
     this.orderService.createOrder(datos).subscribe({
       next: () => {
