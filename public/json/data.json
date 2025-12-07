@@ -135,22 +135,37 @@
       "email": "miguel@gmail.com",
       "role": "Administrador",
       "active": true
+    },
+    {
+      "id": "2e0b",
+      "name": "Mario",
+      "email": "mario@gmail.com",
+      "role": "Cliente",
+      "active": true
     }
   ],
   "orders": [
-    {
-      "userId": "051e",
-      "serviceId": 4,
-      "date": "2026-03-08",
-      "total": 250,
-      "active": true,
-      "id": "542b"
-    },
     {
       "id": "e093",
       "userId": "7458",
       "serviceId": "1",
       "date": "2026-03-08",
+      "total": 1500,
+      "active": true
+    },
+    {
+      "id": "9973",
+      "userId": "d990",
+      "date": "2025-12-07",
+      "serviceId": 1,
+      "total": 1500,
+      "active": true
+    },
+    {
+      "id": "8b8c",
+      "userId": "2e0b",
+      "date": "2025-12-07",
+      "serviceId": 1,
       "total": 1500,
       "active": true
     }

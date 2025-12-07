@@ -1,89 +1,147 @@
-<div class="detalle-wrapper" *ngIf="!cargando && servicio">
-  <div class="card detalle-card">
-    <div class="row g-0">
-      <!-- Imagen -->
-      <div class="col-md-5">
-        <img
-          [src]="servicio.image"
-          class="img-fluid imagen-detalle"
-          [alt]="servicio.name"
-        />
-      </div>
+@if (!cargando && servicio) {
+  <div class="detalle-wrapper">
+    <div class="card detalle-card">
+      <div class="row g-0">
+        
+        <div class="col-md-5">
+          <img
+            [src]="servicio.image"
+            class="img-fluid imagen-detalle"
+            [alt]="servicio.name"
+          />
+        </div>
 
-      <!-- Información -->
-      <div class="col-md-7">
-        <div class="card-body">
-          <p class="detalle-subtitulo">Detalle del servicio</p>
+        <div class="col-md-7">
+          <div class="card-body">
+            <p class="detalle-subtitulo">Detalle del servicio</p>
 
-          <h2 class="card-title detalle-titulo">
-            {{ servicio.name }}
-          </h2>
+            <h2 class="card-title detalle-titulo">
+              {{ servicio.name }}
+            </h2>
 
-          <p class="badge-clasificacion" *ngIf="servicio.classification">
-            {{ servicio.classification | uppercase }}
-          </p>
+            @if (servicio.classification) {
+              <p class="badge-clasificacion">
+                {{ servicio.classification | uppercase }}
+              </p>
+            }
 
-          <p class="card-text descripcion-detalle">
-            {{ servicio.description }}
-          </p>
-
-          <!-- Bloque de info resumida -->
-          <div class="info-resumen">
-            <div class="info-item">
-              <span class="info-label">Categoría</span>
-              <span class="info-value">
-                {{ categoria?.name || 'Sin categoría' }}
-              </span>
-            </div>
-
-            <div class="info-item">
-              <span class="info-label">Precio referencia</span>
-              <span class="info-value precio">
-                {{ servicio.price | currency: 'USD' }}
-              </span>
-            </div>
-
-            <div class="info-item">
-              <span class="info-label">Empresa</span>
-              <span class="info-value">
-                {{ empresa?.name || 'No especificada' }}
-              </span>
-            </div>
-
-            <div class="info-item" *ngIf="empresa">
-              <span class="info-label">Ciudad</span>
-              <span class="info-value">
-                {{ empresa.city }}
-              </span>
-            </div>
-          </div>
-
-          <!-- Contacto empresa -->
-          <div class="contacto-card mt-3" *ngIf="empresa">
-            <p class="contacto-titulo">Contacto de la empresa</p>
-            <p class="mb-1">
-              <strong>Teléfono:</strong> {{ empresa.phone }}
+            <p class="card-text descripcion-detalle">
+              {{ servicio.description }}
             </p>
-            <p class="mb-1">
-              <strong>Correo:</strong> {{ empresa.contactEmail }}
-            </p>
-          </div>
 
-          <!-- botones de  solicitar cotización y volver al catálogo -->
-          <div class="mt-4 d-flex flex-wrap gap-2">
-            <a routerLink="/eventos-list" class="btn btn-outline-secondary btn-sm">
-              ← Volver al catálogo
-            </a>
+            <div class="info-resumen">
+              <div class="info-item">
+                <span class="info-label">Categoría</span>
+                <span class="info-value">
+                  {{ categoria?.name || 'Sin categoría' }}
+                </span>
+              </div>
 
-            <button type="button" class="btn btn-primary btn-sm">
-              Solicitar cotización
-            </button>
+              <div class="info-item">
+                <span class="info-label">Precio referencia</span>
+                <span class="info-value precio">
+                  {{ servicio.price | currency: 'USD' }}
+                </span>
+              </div>
+
+              <div class="info-item">
+                <span class="info-label">Empresa</span>
+                <span class="info-value">
+                  {{ empresa?.name || 'No especificada' }}
+                </span>
+              </div>
+
+              @if (empresa) {
+                <div class="info-item">
+                  <span class="info-label">Ciudad</span>
+                  <span class="info-value">
+                    {{ empresa.city }}
+                  </span>
+                </div>
+              }
+            </div>
+
+            @if (empresa) {
+              <div class="contacto-card mt-3">
+                <p class="contacto-titulo">Contacto de la empresa</p>
+                <p class="mb-1">
+                  <strong>Teléfono:</strong> {{ empresa.phone }}
+                </p>
+                <p class="mb-1">
+                  <strong>Correo:</strong> {{ empresa.contactEmail }}
+                </p>
+              </div>
+            }
+
+            <div class="mt-4 d-flex flex-wrap gap-2">
+              <a routerLink="/eventos-list" class="btn btn-outline-secondary btn-sm">
+                ← Volver al catálogo
+              </a>
+
+              <button type="button" class="btn btn-primary btn-sm" (click)="openOrderModal()">
+                Solicitar cotización
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+}
+
+@if (cargando) {
+  <div class="detalle-cargando text-center">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="mt-2">Cargando detalle del servicio...</p>
+  </div>
+}
+
+<div class="modal fade" id="orderModal" tabindex="-1" aria-hidden="true" #orderModalRef>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">Confirmar Solicitud</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="modalRef.hide()"></button>
+      </div>
+
+      <form [formGroup]="formOrder" (ngSubmit)="saveOrder()">
+        <div class="modal-body">
+          
+          @if (servicio) {
+            <div class="alert alert-light border">
+              <h6 class="text-primary fw-bold">{{ servicio.name }}</h6>
+              <p class="mb-0 small text-muted">Precio estimado: <strong>{{ servicio.price | currency:'USD' }}</strong></p>
+            </div>
+          }
+
+          <div class="mb-3">
+            <label class="form-label">¿Quién solicita el servicio? <span class="text-danger">*</span></label>
+            <select class="form-select" formControlName="userId" [class.is-invalid]="isFieldInvalid('userId')">
+              <option value="">Seleccione su usuario...</option>
+              @for (u of users; track u.id) {
+                <option [value]="u.id">{{ u.name }} ({{ u.email }})</option>
+              }
+            </select>
+            <div class="invalid-feedback">Debe seleccionar un usuario.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Fecha deseada del evento <span class="text-danger">*</span></label>
+            <input type="date" class="form-control" formControlName="date" [class.is-invalid]="isFieldInvalid('date')">
+            <div class="invalid-feedback">La fecha es requerida.</div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="modalRef.hide()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Confirmar Solicitud</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
 </div>
-<div *ngIf="cargando" class="detalle-cargando text-center">
-  Cargando detalle del servicio...
-</div>
+
+<app-notification></app-notification>

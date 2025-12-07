@@ -2,17 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-
-// Modelos y Servicios
 import { UserService } from '../../../services/user.service';
 import { User } from '../../../models/User';
 import { NotificationService } from '../../../services/notification.service';
-
-// Componentes Compartidos
 import { Dialog } from '../../../shared/dialog/dialog';
 import { TableReutilizable } from '../../../shared/table-reutilizable/table-reutilizable';
 import { NotificationComponent } from '../../../shared/notification/notification';
-
 @Component({
   selector: 'app-users-crud',
   standalone: true,
@@ -40,7 +35,7 @@ export class UsersCrud implements OnInit {
   isEditing = false;
   modalVisible = false;
 
-  // Modal de “VER”  tabla reutilizable
+  // Modal de ver
   viewModalVisible = false;
   viewTableData: any[] = [];
   viewTableColumns: string[] = ['id', 'name', 'email', 'role', 'estado'];
@@ -49,7 +44,7 @@ export class UsersCrud implements OnInit {
   constructor(
     private service: UserService,
     private modalService: NgbModal,
-    private notify: NotificationService // <--- INYECTAR SERVICIO
+    private notify: NotificationService
   ) { }
 
   ngOnInit() {
@@ -76,7 +71,7 @@ export class UsersCrud implements OnInit {
     );
   }
 
-  /* LÓGICA DE VALIDACIÓN  */
+  /// LÓGICA DE VALIDACIÓN  
 
   isFieldInvalid(form: NgForm | undefined, field: keyof User): boolean {
     if (!form) return false;
@@ -112,7 +107,7 @@ export class UsersCrud implements OnInit {
     return this.isFormValid(form);
   }
 
-  /* MODAL PRINCIPAL (CREAR / EDITAR)  */
+  // MODAL PRINCIPAL (CREAR / EDITAR)  
 
   openCreateModal() {
     this.isEditing = false;
@@ -207,7 +202,6 @@ export class UsersCrud implements OnInit {
   //MODAL TABLE-REUTILIZABLE  //
 
   openViewModal(user: User) {
-    // solo ese usuario en la tabla
     const userConEstado = {
       ...user,
       estado: user.active ? 'Activo' : 'Inactivo',

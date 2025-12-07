@@ -31,59 +31,61 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let s of services">
-          <td>
-            <div class="d-flex align-items-center">
-              <img 
-                [src]="s.image" 
-                alt="img" 
-                class="rounded me-2 bg-light" 
-                style="width: 50px; height: 50px; object-fit: cover;"
-                (error)="handleImageError($event)"
-              >
-              <div class="d-flex flex-column">
-                <span class="fw-bold">{{ s.name }}</span>
-                <small class="text-muted text-truncate" style="max-width: 150px;">{{ s.description }}</small>
+        @for (s of services; track s.id) {
+          <tr>
+            <td>
+              <div class="d-flex align-items-center">
+                <img 
+                  [src]="s.image" 
+                  alt="img" 
+                  class="rounded me-2 bg-light" 
+                  style="width: 50px; height: 50px; object-fit: cover;"
+                  (error)="handleImageError($event)"
+                >
+                <div class="d-flex flex-column">
+                  <span class="fw-bold">{{ s.name }}</span>
+                  <small class="text-muted text-truncate" style="max-width: 150px;">{{ s.description }}</small>
+                </div>
               </div>
-            </div>
-          </td>
-          
-          <td>{{ getCategoryName(s.categoryId) }}</td>
-          <td>{{ getCompanyName(s.companyId) }}</td>
-          <td>{{ s.price | currency:'USD' }}</td>
-          
-          <td>
-            <span class="badge rounded-pill" 
-              [ngClass]="{
-                'bg-secondary': s.classification === 'plata',
-                'bg-warning text-dark': s.classification === 'oro',
-                'bg-info text-dark': s.classification === 'diamante'
-              }">
-              {{ s.classification | titlecase }}
-            </span>
-          </td>
+            </td>
+            
+            <td>{{ getCategoryName(s.categoryId) }}</td>
+            <td>{{ getCompanyName(s.companyId) }}</td>
+            <td>{{ s.price | currency:'USD' }}</td>
+            
+            <td>
+              <span class="badge rounded-pill" 
+                [ngClass]="{
+                  'bg-secondary': s.classification === 'plata',
+                  'bg-warning text-dark': s.classification === 'oro',
+                  'bg-info text-dark': s.classification === 'diamante'
+                }">
+                {{ s.classification | titlecase }}
+              </span>
+            </td>
 
-          <td>
-            <span class="badge" [ngClass]="s.active ? 'bg-success' : 'bg-danger'">
-              {{ s.active ? 'Activo' : 'Inactivo' }}
-            </span>
-          </td>
+            <td>
+              <span class="badge" [ngClass]="s.active ? 'bg-success' : 'bg-danger'">
+                {{ s.active ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
 
-          <td class="text-end">
-            <button class="btn btn-sm btn-outline-primary me-2" (click)="openEdit(s)">
-              Editar
-            </button>
-            <button class="btn btn-sm btn-outline-danger" (click)="delete(s)">
-              Eliminar
-            </button>
-          </td>
-        </tr>
-
-        <tr *ngIf="services.length === 0">
-          <td colspan="7" class="text-center py-4 text-muted">
-            No se encontraron servicios.
-          </td>
-        </tr>
+            <td class="text-end">
+              <button class="btn btn-sm btn-outline-primary me-2" (click)="openEdit(s)">
+                Editar
+              </button>
+              <button class="btn btn-sm btn-outline-danger" (click)="delete(s)">
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="7" class="text-center py-4 text-muted">
+              No se encontraron servicios.
+            </td>
+          </tr>
+        }
       </tbody>
     </table>
   </div>
@@ -113,8 +115,12 @@
                 [class.is-invalid]="isFieldInvalid('name')"
               >
               <div class="invalid-feedback">
-                <span *ngIf="getFieldError('name', 'required')">El nombre es requerido.</span>
-                <span *ngIf="getFieldError('name', 'maxlength')">Máximo 100 caracteres.</span>
+                @if (getFieldError('name', 'required')) {
+                  <span>El nombre es requerido.</span>
+                }
+                @if (getFieldError('name', 'maxlength')) {
+                  <span>Máximo 100 caracteres.</span>
+                }
               </div>
             </div>
 
@@ -127,8 +133,12 @@
                 [class.is-invalid]="isFieldInvalid('price')"
               >
               <div class="invalid-feedback">
-                <span *ngIf="getFieldError('price', 'required')">El precio es requerido.</span>
-                <span *ngIf="getFieldError('price', 'min')">No puede ser negativo.</span>
+                @if (getFieldError('price', 'required')) {
+                  <span>El precio es requerido.</span>
+                }
+                @if (getFieldError('price', 'min')) {
+                  <span>No puede ser negativo.</span>
+                }
               </div>
             </div>
           </div>
@@ -139,7 +149,9 @@
               <select class="form-select" formControlName="categoryId" 
                 [class.is-invalid]="isFieldInvalid('categoryId')">
                 <option value="">Seleccione...</option>
-                <option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</option>
+                @for (c of categories; track c.id) {
+                  <option [value]="c.id">{{ c.name }}</option>
+                }
               </select>
               <div class="invalid-feedback">
                 Selecciona una categoría.
@@ -151,7 +163,9 @@
               <select class="form-select" formControlName="companyId"
                 [class.is-invalid]="isFieldInvalid('companyId')">
                 <option value="">Seleccione...</option>
-                <option *ngFor="let co of companies" [value]="co.id">{{ co.name }}</option>
+                @for (co of companies; track co.id) {
+                  <option [value]="co.id">{{ co.name }}</option>
+                }
               </select>
               <div class="invalid-feedback">
                 Selecciona una empresa.

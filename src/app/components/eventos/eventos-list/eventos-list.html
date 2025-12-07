@@ -6,80 +6,127 @@
     </p>
   </div>
 
-  <!-- Estado de carga -->
-  <div *ngIf="cargando" class="text-center texto-secundario mt-4">
-    Cargando servicios...
-  </div>
+  @if (cargando) {
+    <div class="text-center texto-secundario mt-4">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="mt-2">Cargando servicios...</p>
+    </div>
+  }
 
-  <!-- Sin resultados -->
-  <div
-    *ngIf="!cargando && services.length === 0"
-    class="text-center texto-secundario mt-4"
-  >
-    No hay servicios disponibles por el momento.
-  </div>
+  @if (!cargando && services.length === 0) {
+    <div class="text-center texto-secundario mt-4">
+      No hay servicios disponibles por el momento.
+    </div>
+  }
 
-  <!-- Grid de cards -->
-  <div
-    *ngIf="!cargando && services.length > 0"
-    class="row g-4 justify-content-center mt-3"
-  >
-    <div
-      class="col-12 col-sm-10 col-md-6 col-lg-4"
-      *ngFor="let servicio of services; trackBy: trackById"
-    >
-      <div class="card card-servicio h-100">
-        <div class="img-container">
-          <img
-            [src]="servicio.image"
-            class="card-img-top img-servicio"
-            [alt]="servicio.name"
-          />
-          <span
-            class="badge badge-clasificacion"
-            [ngClass]="getBadgeClass(servicio.classification)"
-          >
-            {{ servicio.classification | uppercase }}
-          </span>
-        </div>
+  @if (!cargando && services.length > 0) {
+    <div class="row g-4 justify-content-center mt-3">
+      @for (servicio of services; track servicio.id) {
+        <div class="col-12 col-sm-10 col-md-6 col-lg-4">
+          <div class="card card-servicio h-100">
+            <div class="img-container">
+              <img
+                [src]="servicio.image"
+                class="card-img-top img-servicio"
+                [alt]="servicio.name"
+              />
+              <span
+                class="badge badge-clasificacion"
+                [ngClass]="getBadgeClass(servicio.classification)"
+              >
+                {{ servicio.classification | uppercase }}
+              </span>
+            </div>
 
-        <div class="card-body d-flex flex-column">
-          <h5 class="card-title nombre-servicio">
-            {{ servicio.name }}
-          </h5>
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title nombre-servicio">
+                {{ servicio.name }}
+              </h5>
 
-          <p class="card-text descripcion">
-            {{ servicio.description }}
-          </p>
+              <p class="card-text descripcion">
+                {{ servicio.description }}
+              </p>
 
-          <p class="mb-1 categoria">
-            <strong>Categoría:</strong>
-            {{ getCategoryName(servicio.categoryId) }}
-          </p>
+              <p class="mb-1 categoria">
+                <strong>Categoría:</strong>
+                {{ getCategoryName(servicio.categoryId) }}
+              </p>
 
-          <p class="mb-1 precio">
-            <strong>Precio desde:</strong>
-            {{ servicio.price | currency: 'USD' }}
-          </p>
+              <p class="mb-1 precio">
+                <strong>Precio desde:</strong>
+                {{ servicio.price | currency: 'USD' }}
+              </p>
 
-          <div class="mt-auto pt-3 d-flex justify-content-between gap-2">
-            <a
-              [routerLink]="['/eventos-view', servicio.id]"
-              class="btn btn-outline-primary btn-sm btn-detalle"
-            >
-              Ver detalle
-            </a>
+              <div class="mt-auto pt-3 d-flex justify-content-between gap-2">
+                <a
+                  [routerLink]="['/eventos-view', servicio.id]"
+                  class="btn btn-outline-primary btn-sm btn-detalle"
+                >
+                  Ver detalle
+                </a>
 
-            <button
-              type="button"
-              class="btn btn-primary btn-sm btn-pedir"
-            >
-              Pedir servicio
-            </button>
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm btn-pedir"
+                  (click)="openOrderModal(servicio)"
+                >
+                  Pedir servicio
+                </button>
+              </div>
+            </div>
           </div>
         </div>
+      }
+    </div>
+  }
+</div>
+
+<div class="modal fade" id="orderModal" tabindex="-1" aria-hidden="true" #orderModalRef>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">Confirmar Solicitud</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="modalRef.hide()"></button>
       </div>
+
+      <form [formGroup]="formOrder" (ngSubmit)="saveOrder()">
+        <div class="modal-body">
+          
+          @if (selectedService) {
+            <div class="alert alert-light border">
+              <h6 class="text-primary fw-bold">{{ selectedService.name }}</h6>
+              <p class="mb-0 small text-muted">Precio estimado: <strong>{{ selectedService.price | currency:'USD' }}</strong></p>
+            </div>
+          }
+
+          <div class="mb-3">
+            <label class="form-label">¿Quién solicita el servicio? <span class="text-danger">*</span></label>
+            <select class="form-select" formControlName="userId" [class.is-invalid]="isFieldInvalid('userId')">
+              <option value="">Seleccione su usuario...</option>
+              @for (u of users; track u.id) {
+                <option [value]="u.id">{{ u.name }} ({{ u.email }})</option>
+              }
+            </select>
+            <div class="invalid-feedback">Debe seleccionar un usuario.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Fecha deseada del evento <span class="text-danger">*</span></label>
+            <input type="date" class="form-control" formControlName="date" [class.is-invalid]="isFieldInvalid('date')">
+            <div class="invalid-feedback">La fecha es requerida.</div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="modalRef.hide()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Confirmar Solicitud</button>
+        </div>
+      </form>
+
     </div>
   </div>
 </div>
 
+<app-notification></app-notification>

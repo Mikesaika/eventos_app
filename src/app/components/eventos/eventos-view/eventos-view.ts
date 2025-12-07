@@ -1,58 +1,149 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { NgIf, CurrencyPipe, UpperCasePipe } from '@angular/common';
-import { ServEventosJson } from '../../../services/ServEventosJson';
+import { CurrencyPipe, UpperCasePipe } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+
+// Modelos
 import { Service } from '../../../models/Service';
 import { Category } from '../../../models/Category';
 import { Company } from '../../../models/Company';
+import { User } from '../../../models/User';
+import { Order } from '../../../models/Order';
 
+// Servicios
+import { ServEventosJson } from '../../../services/ServEventosJson';
+import { OrderService } from '../../../services/order.service';
+import { UserService } from '../../../services/user.service';
+import { NotificationService } from '../../../services/notification.service';
+
+// Componentes
+import { NotificationComponent } from '../../../shared/notification/notification';
+
+declare const bootstrap: any;
 
 @Component({
   selector: 'app-eventos-view',
   standalone: true,
   imports: [
-    NgIf,
     CurrencyPipe,
-    UpperCasePipe, // para usar uppercase
+    UpperCasePipe,
     RouterLink,
+    ReactiveFormsModule,
+    NotificationComponent
   ],
   templateUrl: './eventos-view.html',
   styleUrl: './eventos-view.css',
 })
-export class EventoView {
+export class EventoView implements OnInit, AfterViewInit {
   servicio!: Service;
   categoria?: Category;
   empresa?: Company;
+  users: User[] = [];
   cargando: boolean = true;
+
+  // Lógica de Pedido
+  formOrder!: FormGroup;
+  modalRef: any;
+  @ViewChild('orderModalRef') modalElement!: ElementRef;
 
   constructor(
     private eventosService: ServEventosJson,
-    private route: ActivatedRoute
-  ) { }
+    private orderService: OrderService,
+    private userService: UserService,
+    private notify: NotificationService,
+    private route: ActivatedRoute,
+    private fb: FormBuilder
+  ) {
+    this.formOrder = this.fb.group({
+      userId: ['', Validators.required],
+      date: ['', Validators.required],
+      serviceId: [''],
+      total: [0],
+      active: [true]
+    });
+  }
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (!id) {
-      return;
-    }
+    this.loadServiceData();
+    this.loadUsers();
+  }
 
-    // Obtiene el servicio por id
+  ngAfterViewInit() {
+    if (typeof bootstrap !== 'undefined') {
+      this.modalRef = new bootstrap.Modal(this.modalElement.nativeElement);
+    }
+  }
+
+  loadServiceData() {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (!id) return;
+
     this.eventosService.getServiceById(id).subscribe((serv) => {
       this.servicio = serv;
 
       this.eventosService.getCategories().subscribe((cats) => {
-        this.categoria = cats.find(
-          (c) => Number(c.id) === this.servicio.categoryId
-        );
+        this.categoria = cats.find((c) => Number(c.id) === Number(this.servicio.categoryId));
       });
 
       this.eventosService.getCompanies().subscribe((comps) => {
-        this.empresa = comps.find(
-          (c) => Number(c.id) === this.servicio.companyId
-        );
+        this.empresa = comps.find((c) => Number(c.id) === Number(this.servicio.companyId));
       });
 
       this.cargando = false;
     });
+  }
+
+  loadUsers() {
+    this.userService.getUsers().subscribe({
+      next: (data) => this.users = data,
+      error: () => this.notify.show('Error cargando usuarios', 'error')
+    });
+  }
+
+  // --- LÓGICA DEL MODAL ---
+
+  openOrderModal() {
+    if (!this.servicio) return;
+
+    this.formOrder.patchValue({
+      serviceId: this.servicio.id,
+      total: this.servicio.price,
+      date: new Date().toISOString().split('T')[0],
+      userId: ''
+    });
+
+    this.modalRef.show();
+  }
+
+  saveOrder() {
+    if (this.formOrder.invalid) {
+      this.formOrder.markAllAsTouched();
+      this.notify.show('Por favor selecciona un usuario y fecha', 'error');
+      return;
+    }
+
+    const datos = this.formOrder.value;
+
+    // --- CORRECCIÓN AQUÍ ---
+    // Convertimos solo los valores numéricos del servicio.
+    // DEJAMOS userId COMO VIENE (String o Number según el select)
+    datos.serviceId = Number(this.servicio.id);
+    datos.total = Number(this.servicio.price);
+
+    // Al no forzar Number(datos.userId), evitamos que se corrompa si es un string complejo.
+
+    this.orderService.createOrder(datos).subscribe({
+      next: () => {
+        this.notify.show('¡Cotización solicitada con éxito!', 'success');
+        this.modalRef.hide();
+        this.formOrder.reset({ active: true });
+      },
+      error: (err) => this.notify.show('Error al solicitar: ' + err.message, 'error')
+    });
+  }
+
+  isFieldInvalid(field: string): boolean {
+    const control = this.formOrder.get(field);
+    return control ? control.invalid && (control.dirty || control.touched) : false;
   }
 }

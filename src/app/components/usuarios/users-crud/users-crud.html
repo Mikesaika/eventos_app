@@ -9,7 +9,6 @@
         <div class="card shadow-sm toolbar-card">
           <div class="card-body py-2 px-3">
             <div class="row g-3 align-items-end">
-              <!-- Buscar -->
               <div class="col-12 col-md-auto">
                 <label class="form-label small text-muted mb-1">Buscar</label>
                 <div class="input-group input-group-sm" style="min-width: 230px">
@@ -27,7 +26,6 @@
           </div>
         </div>
       </div>
-      <!--   Botón agregar  -->
       <div class="col-auto ms-auto">
         <button
           type="button"
@@ -64,67 +62,70 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let u of filteredUsers">
-              <td>
-                <div class="fw-semibold">{{ u.name }}</div>
-                <div class="small text-muted">{{ u.id || '—' }}</div>
-              </td>
-              <td>
-                <span class="small text-muted">{{ u.email }}</span>
-              </td>
-              <td>
-                <span class="badge rounded-pill bg-info-subtle text-info-emphasis">
-                  {{ u.role }}
-                </span>
-              </td>
-              <td class="text-center">
-                <span
-                  class="badge rounded-pill px-3 py-1 estado-pill"
-                  [class.bg-success-subtle]="u.active"
-                  [class.text-success]="u.active"
-                  [class.bg-secondary-subtle]="!u.active"
-                  [class.text-secondary]="!u.active"
-                >
-                  {{ u.active ? 'Activo' : 'Inactivo' }}
-                </span>
-              </td>
-              <td class="text-center">
-                <div class="d-flex justify-content-center gap-2">
-                  <button
-                    type="button"
-                    class="btn btn-outline-secondary btn-sm rounded-circle"
-                    title="Ver usuario"
-                    (click)="openViewModal(u)"
+            @for (u of filteredUsers; track u.id) {
+              <tr>
+                <td>
+                  <div class="fw-semibold">{{ u.name }}</div>
+                  <div class="small text-muted">{{ u.id || '—' }}</div>
+                </td>
+                <td>
+                  <span class="small text-muted">{{ u.email }}</span>
+                </td>
+                <td>
+                  <span class="badge rounded-pill bg-info-subtle text-info-emphasis">
+                    {{ u.role }}
+                  </span>
+                </td>
+                <td class="text-center">
+                  <span
+                    class="badge rounded-pill px-3 py-1 estado-pill"
+                    [class.bg-success-subtle]="u.active"
+                    [class.text-success]="u.active"
+                    [class.bg-secondary-subtle]="!u.active"
+                    [class.text-secondary]="!u.active"
                   >
-                    <i class="bi bi-eye"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-outline-primary btn-sm rounded-circle"
-                    title="Editar usuario"
-                    (click)="openEditModal(u)"
-                  >
-                    <i class="bi bi-pencil"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-outline-danger btn-sm rounded-circle"
-                    title="Eliminar usuario"
-                    (click)="deleteUser(u.id)"
-                  >
-                    <i class="bi bi-trash"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-            <tr *ngIf="filteredUsers.length === 0">
-              <td colspan="5" class="text-center py-4">
-                <div class="text-muted mb-1">No se encontraron usuarios.</div>
-                <small class="text-muted">
-                  Ajusta los filtros o limpia el campo de búsqueda.
-                </small>
-              </td>
-            </tr>
+                    {{ u.active ? 'Activo' : 'Inactivo' }}
+                  </span>
+                </td>
+                <td class="text-center">
+                  <div class="d-flex justify-content-center gap-2">
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary btn-sm rounded-circle"
+                      title="Ver usuario"
+                      (click)="openViewModal(u)"
+                    >
+                      <i class="bi bi-eye"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-outline-primary btn-sm rounded-circle"
+                      title="Editar usuario"
+                      (click)="openEditModal(u)"
+                    >
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-outline-danger btn-sm rounded-circle"
+                      title="Eliminar usuario"
+                      (click)="deleteUser(u.id)"
+                    >
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="text-center py-4">
+                  <div class="text-muted mb-1">No se encontraron usuarios.</div>
+                  <small class="text-muted">
+                    Ajusta los filtros o limpia el campo de búsqueda.
+                  </small>
+                </td>
+              </tr>
+            }
           </tbody>
         </table>
       </div>
@@ -155,147 +156,158 @@
   </div>
 </div>
 
-<div class="custom-modal-backdrop" *ngIf="modalVisible">
-  <div class="modal d-block" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content shadow-lg border-0">
-        <div class="modal-header modal-header-pastel">
-          <div>
-            <h5 class="modal-title mb-0">
-              {{ isEditing ? 'Editar usuario' : 'Registrar nuevo usuario' }}
-            </h5>
-            <small class="d-block text-muted">
-              {{
-                isEditing
-                  ? 'Actualiza los datos del usuario seleccionado.'
-                  : 'Completa el formulario para crear un nuevo usuario.'
-              }}
-            </small>
-          </div>
-          <button
-            type="button"
-            class="btn-close"
-            aria-label="Close"
-            (click)="closeModal(userForm)"
-          ></button>
-        </div>
-        <form #userForm="ngForm" novalidate (submit)="onSubmit(userForm, $event)">
-          <div class="modal-body">
-            <div class="mb-3" [ngClass]="{ 'has-error': isFieldInvalid(userForm, 'name') }">
-              <label class="form-label fw-semibold">Nombre completo</label>
-              <input
-                type="text"
-                class="form-control"
-                name="name"
-                [(ngModel)]="formModel.name"
-                required
-                placeholder="Ej. Carlos Pérez"
-                [ngClass]="{ 'is-invalid': isFieldInvalid(userForm, 'name') }"
-              />
-              <small class="text-danger d-block mt-1" *ngIf="isFieldInvalid(userForm, 'name')">
-                {{ getFieldError('name', userForm) }}
+@if (modalVisible) {
+  <div class="custom-modal-backdrop">
+    <div class="modal d-block" tabindex="-1">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content shadow-lg border-0">
+          <div class="modal-header modal-header-pastel">
+            <div>
+              <h5 class="modal-title mb-0">
+                {{ isEditing ? 'Editar usuario' : 'Registrar nuevo usuario' }}
+              </h5>
+              <small class="d-block text-muted">
+                {{
+                  isEditing
+                    ? 'Actualiza los datos del usuario seleccionado.'
+                    : 'Completa el formulario para crear un nuevo usuario.'
+                }}
               </small>
             </div>
-            <div class="mb-3" [ngClass]="{ 'has-error': isFieldInvalid(userForm, 'email') }">
-              <label class="form-label fw-semibold">Correo electrónico</label>
-              <input
-                type="email"
-                class="form-control"
-                name="email"
-                [(ngModel)]="formModel.email"
-                required
-                email
-                placeholder="usuario@correo.com"
-                [ngClass]="{ 'is-invalid': isFieldInvalid(userForm, 'email') }"
-              />
-              <small class="text-danger d-block mt-1" *ngIf="isFieldInvalid(userForm, 'email')">
-                {{ getFieldError('email', userForm) }}
-              </small>
-            </div>
-            <div class="mb-3" [ngClass]="{ 'has-error': isFieldInvalid(userForm, 'role') }">
-              <label class="form-label fw-semibold">Rol</label>
-              <select
-                class="form-select"
-                name="role"
-                [(ngModel)]="formModel.role"
-                required
-                [ngClass]="{ 'is-invalid': isFieldInvalid(userForm, 'role') }"
-              >
-                <option value="" disabled>Seleccione un rol</option>
-                <option value="Administrador">Administrador</option>
-                <option value="Cliente">Cliente</option>
-                <option value="Proveedor">Proveedor</option>
-              </select>
-              <small class="text-danger d-block mt-1" *ngIf="isFieldInvalid(userForm, 'role')">
-                {{ getFieldError('role', userForm) }}
-              </small>
-            </div>
-            <div class="form-check mb-1">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                id="active"
-                name="active"
-                [(ngModel)]="formModel.active"
-              />
-              <label class="form-check-label fw-semibold" for="active"> Usuario activo </label>
-            </div>
-          </div>
-          <div class="modal-footer d-flex justify-content-between">
-            <button type="button" class="btn btn-outline-secondary" (click)="closeModal(userForm)">
-              Cancelar
-            </button>
-
             <button
-              type="submit"
-              class="btn custom-btn fw-semibold"
-              [disabled]="!canSubmit(userForm)"
+              type="button"
+              class="btn-close"
+              aria-label="Close"
+              (click)="closeModal(userForm)"
+            ></button>
+          </div>
+          <form #userForm="ngForm" novalidate (submit)="onSubmit(userForm, $event)">
+            <div class="modal-body">
+              <div class="mb-3" [ngClass]="{ 'has-error': isFieldInvalid(userForm, 'name') }">
+                <label class="form-label fw-semibold">Nombre completo</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="name"
+                  [(ngModel)]="formModel.name"
+                  required
+                  placeholder="Ej. Carlos Pérez"
+                  [ngClass]="{ 'is-invalid': isFieldInvalid(userForm, 'name') }"
+                />
+                @if (isFieldInvalid(userForm, 'name')) {
+                  <small class="text-danger d-block mt-1">
+                    {{ getFieldError('name', userForm) }}
+                  </small>
+                }
+              </div>
+              <div class="mb-3" [ngClass]="{ 'has-error': isFieldInvalid(userForm, 'email') }">
+                <label class="form-label fw-semibold">Correo electrónico</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  name="email"
+                  [(ngModel)]="formModel.email"
+                  required
+                  email
+                  placeholder="usuario@correo.com"
+                  [ngClass]="{ 'is-invalid': isFieldInvalid(userForm, 'email') }"
+                />
+                @if (isFieldInvalid(userForm, 'email')) {
+                  <small class="text-danger d-block mt-1">
+                    {{ getFieldError('email', userForm) }}
+                  </small>
+                }
+              </div>
+              <div class="mb-3" [ngClass]="{ 'has-error': isFieldInvalid(userForm, 'role') }">
+                <label class="form-label fw-semibold">Rol</label>
+                <select
+                  class="form-select"
+                  name="role"
+                  [(ngModel)]="formModel.role"
+                  required
+                  [ngClass]="{ 'is-invalid': isFieldInvalid(userForm, 'role') }"
+                >
+                  <option value="" disabled>Seleccione un rol</option>
+                  <option value="Administrador">Administrador</option>
+                  <option value="Cliente">Cliente</option>
+                  <option value="Proveedor">Proveedor</option>
+                </select>
+                @if (isFieldInvalid(userForm, 'role')) {
+                  <small class="text-danger d-block mt-1">
+                    {{ getFieldError('role', userForm) }}
+                  </small>
+                }
+              </div>
+              <div class="form-check mb-1">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="active"
+                  name="active"
+                  [(ngModel)]="formModel.active"
+                />
+                <label class="form-check-label fw-semibold" for="active"> Usuario activo </label>
+              </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+              <button type="button" class="btn btn-outline-secondary" (click)="closeModal(userForm)">
+                Cancelar
+              </button>
+
+              <button
+                type="submit"
+                class="btn custom-btn fw-semibold"
+                [disabled]="!canSubmit(userForm)"
+              >
+                {{ isEditing ? 'Actualizar' : 'Guardar usuario' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+@if (viewModalVisible) {
+  <div class="custom-modal-backdrop">
+    <div class="modal d-block" tabindex="-1">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content shadow-lg border-0">
+        
+          <div class="modal-header modal-header-pastel">
+            <div>
+              <h5 class="modal-title mb-0">Detalle del usuario</h5>
+              <small class="d-block text-muted">
+                Visualiza la información del usuario en la tabla.
+              </small>
+            </div>
+            <button
+              type="button"
+              class="btn-close"
+              aria-label="Close"
+              (click)="closeViewModal()"
+            ></button>
+          </div>
+
+          <div class="modal-body">
+            <app-table-reutilizable
+              [data]="viewTableData"
+              [columns]="viewTableColumns"
+              [headers]="viewTableHeaders"
             >
-              {{ isEditing ? 'Actualizar' : 'Guardar usuario' }}
+            </app-table-reutilizable>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" (click)="closeViewModal()">
+              Cerrar
             </button>
           </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- MODAL "VER USUARIO" TABLA REUTILIZABLE -->
-<div class="custom-modal-backdrop" *ngIf="viewModalVisible">
-  <div class="modal d-block" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content shadow-lg border-0">
-      
-        <div class="modal-header modal-header-pastel">
-          <div>
-            <h5 class="modal-title mb-0">Detalle del usuario</h5>
-            <small class="d-block text-muted">
-              Visualiza la información del usuario en la tabla.
-            </small>
-          </div>
-          <button
-            type="button"
-            class="btn-close"
-            aria-label="Close"
-            (click)="closeViewModal()"
-          ></button>
-        </div>
-
-        <div class="modal-body">
-          <app-table-reutilizable
-            [data]="viewTableData"
-            [columns]="viewTableColumns"
-            [headers]="viewTableHeaders"
-          >
-          </app-table-reutilizable>
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" (click)="closeViewModal()">
-            Cerrar
-          </button>
         </div>
       </div>
     </div>
   </div>
-</div>
+}
+
 <app-notification></app-notification>

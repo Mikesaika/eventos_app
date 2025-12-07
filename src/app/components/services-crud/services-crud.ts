@@ -1,13 +1,13 @@
 import { Component, ElementRef, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgFor, NgIf, NgClass, TitleCasePipe, CurrencyPipe } from '@angular/common';
+import { NgClass, TitleCasePipe, CurrencyPipe } from '@angular/common';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Service } from '../../models/Service';
 import { Category } from '../../models/Category';
 import { Company } from '../../models/Company';
 import { ServEventosJson } from '../../services/ServEventosJson';
-import { Dialog } from '../../shared/dialog/dialog';
 import { NotificationService } from '../../services/notification.service';
+import { Dialog } from '../../shared/dialog/dialog';
 import { NotificationComponent } from '../../shared/notification/notification';
 
 declare const bootstrap: any;
@@ -17,8 +17,6 @@ declare const bootstrap: any;
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    NgIf,
-    NgFor,
     NgClass,
     TitleCasePipe,
     CurrencyPipe,
@@ -32,7 +30,7 @@ export class ServicesCrud implements OnInit, AfterViewInit {
   allServices: Service[] = [];
   categories: Category[] = [];
   companies: Company[] = [];
-  // Formulario y Modal
+
   formService!: FormGroup;
   editingId: string | null = null;
   modalRef: any;
@@ -101,6 +99,7 @@ export class ServicesCrud implements OnInit, AfterViewInit {
       );
     }
   }
+
   getCategoryName(id: number): string {
     const cat = this.categories.find(c => Number(c.id) === Number(id));
     return cat ? cat.name : 'Sin Categoría';
@@ -112,17 +111,15 @@ export class ServicesCrud implements OnInit, AfterViewInit {
   }
 
   handleImageError(event: any) {
-    // Fallback por si la imagen falla
     event.target.src = 'https://via.placeholder.com/50';
   }
 
-  // Devuelve true si el campo es inválido Y el usuario lo ha tocado o modificado
+  // VALIDATORS
   isFieldInvalid(field: string): boolean {
     const control = this.formService.get(field);
     return control ? control.invalid && (control.dirty || control.touched) : false;
   }
 
-  // Devuelve true si el campo tiene un error específico
   getFieldError(field: string, error: string): boolean {
     const control = this.formService.get(field);
     return control ? control.hasError(error) : false;
@@ -152,7 +149,7 @@ export class ServicesCrud implements OnInit, AfterViewInit {
     const datos = this.formService.value;
     datos.categoryId = Number(datos.categoryId);
     datos.companyId = Number(datos.companyId);
-    // EDITAR
+
     if (this.editingId) {
       const serviceUpdate: Service = { ...datos, id: this.editingId };
       this.miServicio.updateService(serviceUpdate).subscribe({
@@ -164,7 +161,6 @@ export class ServicesCrud implements OnInit, AfterViewInit {
         error: (err) => this.notify.show("Error al actualizar: " + err.message, 'error')
       });
     } else {
-      // CREAR
       this.miServicio.createService(datos).subscribe({
         next: () => {
           this.notify.show('Servicio creado exitosamente', 'success');
