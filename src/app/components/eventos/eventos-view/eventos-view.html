@@ -1,85 +1,89 @@
 @if (!cargando && servicio) {
   <div class="detalle-wrapper">
-    <div class="card detalle-card">
+    <div class="card detalle-card shadow-sm border-0">
       <div class="row g-0">
         
         <div class="col-md-5">
           <img
-            [src]="servicio.image"
-            class="img-fluid imagen-detalle"
-            [alt]="servicio.name"
+            [src]="servicio.imagenURL"
+            class="img-fluid imagen-detalle rounded-start h-100"
+            style="object-fit: cover; min-height: 400px;"
+            [alt]="servicio.nombre"
           />
         </div>
 
         <div class="col-md-7">
-          <div class="card-body">
-            <p class="detalle-subtitulo">Detalle del servicio</p>
+          <div class="card-body p-4">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb mb-2">
+                <li class="breadcrumb-item small"><a routerLink="/eventos-list" class="text-decoration-none">Catálogo</a></li>
+                <li class="breadcrumb-item small active">{{ categoria?.nombre || 'General' }}</li>
+              </ol>
+            </nav>
 
-            <h2 class="card-title detalle-titulo">
-              {{ servicio.name }}
-            </h2>
+            <h1 class="card-title detalle-titulo fw-bold text-dark">
+              {{ servicio.nombre }}
+            </h1>
 
-            @if (servicio.classification) {
-              <p class="badge-clasificacion">
-                {{ servicio.classification | uppercase }}
-              </p>
+            @if (servicio.clasificacion) {
+              <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle mb-3 px-3 py-2">
+                <i class="bi bi-award-fill me-1"></i> {{ servicio.clasificacion | uppercase }}
+              </span>
             }
 
-            <p class="card-text descripcion-detalle">
-              {{ servicio.description }}
+            <p class="card-text descripcion-detalle text-secondary fs-5">
+              {{ servicio.descripcion }}
             </p>
 
-            <div class="info-resumen">
-              <div class="info-item">
-                <span class="info-label">Categoría</span>
-                <span class="info-value">
-                  {{ categoria?.name || 'Sin categoría' }}
-                </span>
-              </div>
+            <div class="info-resumen mt-4 p-3 bg-light rounded border border-light-subtle">
+              <div class="row">
+                <div class="col-sm-6 info-item mb-2">
+                  <span class="info-label fw-bold text-muted small d-block">Categoría</span>
+                  <span class="info-value text-dark">{{ categoria?.nombre || 'Sin categoría' }}</span>
+                </div>
 
-              <div class="info-item">
-                <span class="info-label">Precio referencia</span>
-                <span class="info-value precio">
-                  {{ servicio.price | currency: 'USD' }}
-                </span>
-              </div>
-
-              <div class="info-item">
-                <span class="info-label">Empresa</span>
-                <span class="info-value">
-                  {{ empresa?.name || 'No especificada' }}
-                </span>
-              </div>
-
-              @if (empresa) {
-                <div class="info-item">
-                  <span class="info-label">Ciudad</span>
-                  <span class="info-value">
-                    {{ empresa.city }}
+                <div class="col-sm-6 info-item mb-2">
+                  <span class="info-label fw-bold text-muted small d-block">Precio referencia</span>
+                  <span class="info-value text-success fw-bold fs-5">
+                    {{ servicio.precio | currency: 'USD' }}
                   </span>
                 </div>
-              }
+
+                <div class="col-sm-6 info-item mb-2">
+                  <span class="info-label fw-bold text-muted small d-block">Proveedor</span>
+                  <span class="info-value text-dark">{{ empresa?.nombre || 'No especificada' }}</span>
+                </div>
+
+                @if (empresa?.ciudad) {
+                  <div class="col-sm-6 info-item mb-2">
+                    <span class="info-label fw-bold text-muted small d-block">Ubicación</span>
+                    <span class="info-value text-dark"><i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ empresa?.ciudad }}</span>
+                  </div>
+                }
+              </div>
             </div>
 
             @if (empresa) {
-              <div class="contacto-card mt-3">
-                <p class="contacto-titulo">Contacto de la empresa</p>
-                <p class="mb-1">
-                  <strong>Teléfono:</strong> {{ empresa.phone }}
-                </p>
-                <p class="mb-1">
-                  <strong>Correo:</strong> {{ empresa.contactEmail }}
-                </p>
+              <div class="contacto-card mt-3 p-3 border-start border-primary border-4 bg-white shadow-sm rounded">
+                <p class="contacto-titulo fw-bold mb-2 text-primary">Información del Proveedor</p>
+                <div class="d-flex align-items-center mb-1">
+                  <i class="bi bi-telephone text-muted me-2"></i>
+                  <span class="small"><strong>Teléfono:</strong> {{ empresa.telefono }}</span>
+                </div>
+                <div class="d-flex align-items-center">
+                  <i class="bi bi-envelope text-muted me-2"></i>
+                  <span class="small"><strong>Correo:</strong> {{ empresa.emailContacto }}</span>
+                </div>
               </div>
             }
 
             <div class="mt-4 d-flex flex-wrap gap-2">
-              <a routerLink="/eventos-list" class="btn btn-outline-secondary btn-sm">
-                ← Volver al catálogo
+              <a routerLink="/eventos-list" class="btn btn-outline-secondary px-4 shadow-sm">
+                <i class="bi bi-arrow-left me-2"></i>Volver al catálogo
               </a>
 
-              <button type="button" class="btn btn-primary btn-sm" (click)="openOrderModal()">
-                Solicitar cotización
+              <button type="button" class="btn btn-primary px-4 shadow-sm fw-bold" (click)="openOrderModal()">
+                <i class="bi bi-calendar-check me-2"></i>Reservar ahora
               </button>
             </div>
           </div>
@@ -90,53 +94,72 @@
 }
 
 @if (cargando) {
-  <div class="detalle-cargando text-center">
-    <div class="spinner-border text-primary" role="status"></div>
-    <p class="mt-2">Cargando detalle del servicio...</p>
+  <div class="detalle-cargando text-center py-5">
+    <div class="spinner-grow text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
+    <p class="mt-3 text-muted fw-semibold">Obteniendo datos de SQL Server...</p>
   </div>
 }
 
 <div class="modal fade" id="orderModal" tabindex="-1" aria-hidden="true" #orderModalRef>
-  <div class="modal-dialog">
-    <div class="modal-content">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg">
       
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title">Confirmar Solicitud</h5>
+      <div class="modal-header bg-primary text-white py-3">
+        <h5 class="modal-title fw-bold"><i class="bi bi-send-check me-2"></i>Confirmar Solicitud</h5>
         <button type="button" class="btn-close btn-close-white" (click)="modalRef.hide()"></button>
       </div>
 
       <form [formGroup]="formOrder" (ngSubmit)="saveOrder()">
-        <div class="modal-body">
+        <div class="modal-body p-4">
           
           @if (servicio) {
-            <div class="alert alert-light border">
-              <h6 class="text-primary fw-bold">{{ servicio.name }}</h6>
-              <p class="mb-0 small text-muted">Precio estimado: <strong>{{ servicio.price | currency:'USD' }}</strong></p>
+            <div class="alert alert-primary bg-primary-subtle border-0 mb-4 d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="mb-0 fw-bold">{{ servicio.nombre }}</h6>
+                <small class="text-muted">Cotización inicial</small>
+              </div>
+              <div class="text-end">
+                <span class="h5 fw-bold text-primary mb-0">{{ servicio.precio | currency:'USD' }}</span>
+              </div>
             </div>
           }
 
           <div class="mb-3">
-            <label class="form-label">¿Quién solicita el servicio? <span class="text-danger">*</span></label>
-            <select class="form-select" formControlName="userId" [class.is-invalid]="isFieldInvalid('userId')">
-              <option value="">Seleccione su usuario...</option>
-              @for (u of users; track u.id) {
-                <option [value]="u.id">{{ u.name }} ({{ u.email }})</option>
-              }
-            </select>
-            <div class="invalid-feedback">Debe seleccionar un usuario.</div>
+            <label class="form-label fw-bold">Cliente <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text bg-white"><i class="bi bi-person"></i></span>
+              <select class="form-select" formControlName="usuarioID" [class.is-invalid]="isFieldInvalid('usuarioID')">
+                <option value="">¿Quién solicita el servicio?</option>
+                @for (u of users; track u.usuarioID) {
+                  <option [value]="u.usuarioID">{{ u.nombre }}</option>
+                }
+              </select>
+            </div>
+            <div class="invalid-feedback">Debes elegir tu usuario para proceder.</div>
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Fecha deseada del evento <span class="text-danger">*</span></label>
-            <input type="date" class="form-control" formControlName="date" [class.is-invalid]="isFieldInvalid('date')">
-            <div class="invalid-feedback">La fecha es requerida.</div>
+            <label class="form-label fw-bold">Fecha del Evento <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text bg-white"><i class="bi bi-calendar-event"></i></span>
+              <input type="date" class="form-control" formControlName="fechaEvento" [class.is-invalid]="isFieldInvalid('fechaEvento')">
+            </div>
+            <div class="invalid-feedback">La fecha es obligatoria.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">Comentarios o Requerimientos</label>
+            <textarea class="form-control" formControlName="observaciones" rows="3" 
+              placeholder="Ej: ¿Hay parqueadero?, requiero menú vegetariano..."></textarea>
           </div>
 
         </div>
 
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="modalRef.hide()">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Confirmar Solicitud</button>
+        <div class="modal-footer bg-light py-3">
+          <button type="button" class="btn btn-outline-secondary px-4" (click)="modalRef.hide()">Cancelar</button>
+          <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm">
+            Enviar Solicitud
+          </button>
         </div>
       </form>
 

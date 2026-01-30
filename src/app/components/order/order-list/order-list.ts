@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NgFor, NgIf, NgClass, CurrencyPipe, DatePipe } from '@angular/common';
+import { NgFor, NgIf, NgClass, CurrencyPipe, DatePipe, UpperCasePipe } from '@angular/common';
 import { forkJoin } from 'rxjs';
 import { Order } from '../../../models/Order';
 import { User } from '../../../models/User';
@@ -12,14 +12,7 @@ import { NotificationComponent } from '../../../shared/notification/notification
 @Component({
   selector: 'app-order-list',
   standalone: true,
-  imports: [
-    NgIf,
-    NgFor,
-    NgClass,
-    CurrencyPipe,
-    DatePipe,
-    NotificationComponent
-  ],
+  imports: [NgIf, NgFor, NgClass, CurrencyPipe, DatePipe, UpperCasePipe],
   templateUrl: './order-list.html',
   styleUrls: ['./order-list.css']
 })
@@ -42,7 +35,6 @@ export class OrderList implements OnInit {
 
   loadData(): void {
     this.loading = true;
-
     forkJoin({
       orders: this.orderService.getOrders(),
       users: this.userService.getUsers(),
@@ -52,70 +44,63 @@ export class OrderList implements OnInit {
         this.users = response.users;
         this.services = response.services;
         this.orders = response.orders;
-
         this.allOrders = [...response.orders];
         this.loading = false;
       },
-      error: (err) => {
-        console.error('Error cargando datos iniciales', err);
+      error: () => {
         this.loading = false;
       }
     });
   }
 
-  getUserName(id: any): string {
-    if (!id) return 'Sin Usuario';
-    const user = this.users.find(u => String(u.id) === String(id));
-    return user ? user.name : 'Usuario no encontrado';
+  // Mapeo de IDs a nombres 
+  getUserName(id: number): string {
+    const user = this.users.find(u => Number(u.usuarioID) === Number(id));
+    return user ? user.nombre : 'Usuario desconocido';
   }
 
-  getUserEmail(id: any): string {
-    if (!id) return 'N/A';
-    const user = this.users.find(u => String(u.id) === String(id));
-    return user ? user.email : 'N/A';
+  getServiceName(id: number): string {
+    const service = this.services.find(s => Number(s.servicioID) === Number(id));
+    return service ? service.nombre : 'Servicio no encontrado';
   }
 
-  getServiceName(id: any): string {
-    if (!id) return 'Sin Servicio';
-    const service = this.services.find(s => String(s.id) === String(id));
-    return service ? service.name : 'Servicio no encontrado';
+  // Métodos de conteo para las tarjetas superiores
+  getPendingOrdersCount(): number {
+    return this.allOrders.filter(o => o.estado === 'Pendiente').length;
   }
 
-  getServiceDescription(id: any): string {
-    if (!id) return 'N/A';
-    const service = this.services.find(s => String(s.id) === String(id));
-    return service ? service.description : 'N/A';
-  }
-
-
-  search(input: HTMLInputElement) {
-    const term = input.value.toLowerCase().trim();
-
-    if (!term) {
-      this.orders = [...this.allOrders];
-      return;
-    }
-
-    this.orders = this.allOrders.filter(o =>
-      this.getUserName(o.userId).toLowerCase().includes(term) ||
-      this.getServiceName(o.serviceId).toLowerCase().includes(term) ||
-      o.date.includes(term) ||
-      o.total.toString().includes(term)
-    );
-  }
-
-
-  getActiveOrdersCount(): number {
-    return this.allOrders.filter(o => o.active).length;
-  }
-
-  getInactiveOrdersCount(): number {
-    return this.allOrders.filter(o => !o.active).length;
+  getApprovedOrdersCount(): number {
+    
+    return this.allOrders.filter(o => o.estado === 'Aprobado' || o.estado === 'Confirmado').length;
   }
 
   getTotalRevenue(): number {
     return this.allOrders
-      .filter(o => o.active)
-      .reduce((sum, o) => sum + o.total, 0);
+      .filter(o => o.estado !== 'Cancelado')
+      .reduce((sum, o) => sum + Number(o.precioTotal), 0);
+  }
+
+  getStatusClass(estado: string): string {
+    switch (estado) {
+      case 'Pendiente': return 'bg-warning text-dark';
+      case 'Aprobado':
+      case 'Confirmado': return 'bg-success text-white';
+      case 'Cancelado': return 'bg-danger text-white';
+      case 'Finalizado': return 'bg-info text-white';
+      default: return 'bg-secondary text-white';
+    }
+  }
+
+  search(input: HTMLInputElement) {
+    const term = input.value.toLowerCase().trim();
+    if (!term) {
+      this.orders = [...this.allOrders];
+      return;
+    }
+    this.orders = this.allOrders.filter(o => 
+      this.getUserName(o.usuarioID).toLowerCase().includes(term) ||
+      this.getServiceName(o.servicioID).toLowerCase().includes(term) ||
+      o.estado.toLowerCase().includes(term)
+    );
   }
 }

@@ -1,133 +1,123 @@
 {
-  "services": [
+  "Servicios": [
     {
-      "id": "2",
-      "name": "Buffet Internacional",
-      "description": "Menú de 3 tiempos con opciones de carne y mariscos.",
-      "categoryId": 2,
-      "companyId": 2,
-      "price": 35.5,
-      "image": "https://i.blogs.es/46851f/desayuno-bufet/450_1000.jpg",
-      "classification": "oro",
-      "active": true
+      "servicioID": 2,
+      "nombre": "Buffet Internacional",
+      "descripcion": "Menú de 3 tiempos con opciones de carne y mariscos.",
+      "categoriaID": 2,
+      "empresaID": 2,
+      "precio": 35.5,
+      "imagenURL": "https://i.blogs.es/46851f/desayuno-bufet/450_1000.jpg",
+      "clasificacion": "oro",
+      "activo": true
     },
     {
-      "id": "3",
-      "name": "DJ + Iluminación",
-      "description": "5 horas de música variada con luces robóticas.",
-      "categoryId": 3,
-      "companyId": 3,
-      "price": 400,
-      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4r80GF3Ue1FEXRSnWZV_kw4K7Kpfb9lEFuw&s",
-      "classification": "plata",
-      "active": true
+      "servicioID": 3,
+      "nombre": "DJ + Iluminación",
+      "descripcion": "5 horas de música variada con luces robóticas.",
+      "categoriaID": 3,
+      "empresaID": 3,
+      "precio": 400,
+      "imagenURL": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4r80GF3Ue1FEXRSnWZV_kw4K7Kpfb9lEFuw&s",
+      "clasificacion": "plata",
+      "activo": true
     },
     {
-      "name": "Decoración Floral",
-      "description": "Centros de mesa y arco de entrada.",
-      "categoryId": 4,
-      "companyId": 1,
-      "price": 250,
-      "image": "https://cdn0.matrimonio.com.pe/article-real-wedding/091/3_2/960/jpg/136253.jpeg",
-      "classification": "plata",
-      "active": true,
-      "id": "4"
+      "servicioID": 4,
+      "nombre": "Decoración Floral",
+      "descripcion": "Centros de mesa y arco de entrada.",
+      "categoriaID": 4,
+      "empresaID": 1,
+      "precio": 250,
+      "imagenURL": "https://cdn0.matrimonio.com.pe/article-real-wedding/091/3_2/960/jpg/136253.jpeg",
+      "clasificacion": "plata",
+      "activo": true
     }
   ],
-  "categories": [
+  "Categorias": [
     {
-      "name": "Comida",
-      "description": "buffets ",
+      "categoriaID": 2,
+      "nombre": "Comida",
+      "descripcion": "buffets",
       "icon": "restaurant",
-      "active": true,
-      "id": "2"
+      "activo": true
     },
     {
-      "name": "Música",
-      "description": "cantantes y sonidistas",
+      "categoriaID": 3,
+      "nombre": "Música",
+      "descripcion": "cantantes y sonidistas",
       "icon": "music_note",
-      "active": true,
-      "id": "3"
+      "activo": true
     },
     {
-      "name": "Decoración",
-      "description": "Globos flores",
+      "categoriaID": 4,
+      "nombre": "Decoración",
+      "descripcion": "Globos flores",
       "icon": "filter_vintage",
-      "active": true,
-      "id": "4"
-    },
-    {
-      "name": "Fotografía",
-      "description": "camarografos y equipos",
-      "icon": "camera_alt",
-      "active": true,
-      "id": "5"
-    },
-    {
-      "id": "973c",
-      "name": "limpieza",
-      "description": "conserjes encargado de la limpieza",
-      "icon": "",
-      "active": true
+      "activo": true
     }
   ],
-  "companies": [
+  "Empresas": [
     {
-      "id": "1",
-      "name": "Eventos Magicos S.A.",
-      "contactEmail": "contacto@eventosmagicos.com",
-      "phone": "0991234567",
-      "city": "Guayaquil",
-      "active": true
+      "empresaID": 1,
+      "nombre": "Eventos Magicos S.A.",
+      "emailContacto": "contacto@eventosmagicos.com",
+      "telefono": "0991234567",
+      "ciudad": "Guayaquil",
+      "activo": true
     },
     {
-      "id": "2",
-      "name": "Banquetes Don Pepe",
-      "contactEmail": "ventas@donpepe.com",
-      "phone": "0997654321",
-      "city": "Quito",
-      "active": true
+      "empresaID": 2,
+      "nombre": "Banquetes Don Pepe",
+      "emailContacto": "ventas@donpepe.com",
+      "telefono": "0997654321",
+      "ciudad": "Quito",
+      "activo": true
     },
     {
-      "id": "3",
-      "name": "Sound Pro",
-      "contactEmail": "info@soundpro.com",
-      "phone": "0981122334",
-      "city": "Cuenca",
-      "active": true
+      "empresaID": 3,
+      "nombre": "Sound Pro",
+      "emailContacto": "info@soundpro.com",
+      "telefono": "0981122334",
+      "ciudad": "Cuenca",
+      "activo": true
     }
   ],
-  "users": [
+  "Usuarios": [
     {
-      "name": "pepe",
+      "usuarioID": 1,
+      "nombre": "Ricardo Administrador",
       "email": "ricardo82qq22@outlook.com",
-      "phone": "0997727620",
-      "addres": "DOMINGO NORERO CERRUTI Y PUEBLO VIEJO",
-      "Dateregis": "2026-01-24T03:11:04.690Z",
-      "role": "Cliente",
-      "active": true,
-      "id": "G49S6G-"
+      "passwordHash": "admin123",
+      "telefono": "0997727620",
+      "direccion": "DOMINGO NORERO CERRUTI Y PUEBLO VIEJO",
+      "fechaRegistro": "2026-01-24T03:11:04.690Z",
+      "rol": "Administrador",
+      "activo": true
     },
     {
-      "name": "Maria Lopez",
-      "email": "ricardo82qq22@outlook.com",
-      "phone": "0997727620",
-      "addres": "DOMINGO NORERO CERRUTI Y PUEBLO VIEJO",
-      "Dateregis": "2026-01-24T03:15:51.692Z",
-      "role": "Cliente",
-      "active": true,
-      "id": "fV6aaXm"
-    },
-    {
-      "name": "Maria Lopez",
-      "email": "ricardo82qq22@outlook.com",
-      "phone": "0997727620",
-      "addres": "doce ava y la diez ava",
-      "Dateregis": "2026-01-24T04:03:30.609Z",
-      "role": "Administrador",
-      "active": true,
-      "id": "pFBXBzH"
+      "usuarioID": 2,
+      "nombre": "Maria Lopez",
+      "email": "cliente@correo.com",
+      "passwordHash": "admin123",
+      "telefono": "0997727620",
+      "direccion": "doce ava y la diez ava",
+      "fechaRegistro": "2026-01-24T04:03:30.609Z",
+      "rol": "Cliente",
+      "activo": true
     }
   ],
-  "orders": []
+  "Ordenes": [
+    {
+      "ordenID": 1,
+      "usuarioID": 2,
+      "servicioID": 2,
+      "fechaOrden": "2026-01-30T14:00:00Z",
+      "fechaEvento": "2026-02-15",
+      "precioTotal": 35.5,
+      "estado": "Pendiente",
+      "observaciones": "Sin mariscos por favor",
+      "activo": true
+    }
+  ]
 }

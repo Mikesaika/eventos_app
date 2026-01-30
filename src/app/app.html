@@ -1,88 +1,115 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-morado">
+<nav class="navbar navbar-expand-lg navbar-dark bg-morado shadow-sm">
   <div class="container">
-    <a class="navbar-brand" routerLink="/eventos-list">
-      EventosApp
+    <a class="navbar-brand fw-bold" routerLink="/eventos-list">
+      <i class="bi bi-calendar-event me-2"></i>EventosApp
     </a>
 
     <button class="navbar-toggler" type="button" (click)="toggleMobileMenu()">
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div class="collapse navbar-collapse" [class.show]="isMobileMenuOpen" id="navbarMain">
-      <ul class="navbar-nav ms-auto">
+    <div class="collapse navbar-collapse" [class.show]="isMobileMenuOpen">
+      <ul class="navbar-nav ms-auto align-items-lg-center">
         
         <li class="nav-item">
-          <a class="nav-link" routerLink="/eventos-list" routerLinkActive="active" (click)="closeMenu()">
-            Catálogo
-          </a>
+          <a class="nav-link" routerLink="/eventos-list" routerLinkActive="active" (click)="closeMenu()">Catálogo</a>
         </li>
       
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/services-crud" routerLinkActive="active" (click)="closeMenu()">
-            Servicios
-          </a>
-        </li>
+        @if (isLoggedIn) {
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/services-crud" routerLinkActive="active" (click)="closeMenu()">Servicios</a>
+          </li>
 
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" 
-             style="cursor: pointer;"
-             (click)="toggleDropdown('pedidos')"
-             [class.show]="activeMenu === 'pedidos'"
-             routerLinkActive="active"
-             [routerLinkActiveOptions]="{exact: false}">
-            Pedidos
-          </a>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" 
+               style="cursor: pointer;"
+               (click)="toggleDropdown('pedidos')"
+               [class.show]="activeMenu === 'pedidos'">
+              Pedidos
+            </a>
+            <ul class="dropdown-menu shadow" [class.show]="activeMenu === 'pedidos'">
+              <li>
+                <a class="dropdown-item" routerLink="/order-list" (click)="closeMenu()">
+                  <i class="bi bi-list-check me-2 text-primary"></i>Listado General
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" routerLink="/order-crud" (click)="closeMenu()">
+                  <i class="bi bi-pencil-square me-2 text-primary"></i>Gestión (CRUD)
+                </a>
+              </li>
+            </ul>
+          </li>
 
-          <ul class="dropdown-menu" [class.show]="activeMenu === 'pedidos'">
-            <li>
-              <a class="dropdown-item" routerLink="/order-list" (click)="closeMenu()">
-                <i class="bi bi-list-check me-2"></i>Listado General
-              </a>
-            </li>
-            <li>
-              <a class="dropdown-item" routerLink="/order-crud" (click)="closeMenu()">
-                <i class="bi bi-gear me-2"></i>Gestión (CRUD)
-              </a>
-            </li>
-          </ul>
-        </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/usuarios" routerLinkActive="active" (click)="closeMenu()">Usuarios</a>
+          </li>
 
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/usuarios" routerLinkActive="active" (click)="closeMenu()">
-            Usuarios
-          </a>
-        </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" 
+               style="cursor: pointer;"
+               (click)="toggleDropdown('categorias')"
+               [class.show]="activeMenu === 'categorias'">
+              Categorías
+            </a>
+            <ul class="dropdown-menu shadow" [class.show]="activeMenu === 'categorias'">
+              <li>
+                <a class="dropdown-item" routerLink="/categories" (click)="closeMenu()">
+                  <i class="bi bi-tags me-2 text-primary"></i>Listado General
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" routerLink="/categories-form" (click)="closeMenu()">
+                  <i class="bi bi-gear-fill me-2 text-primary"></i>Gestión (CRUD)
+                </a>
+              </li>
+            </ul>
+          </li>
+        }
 
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" 
-             style="cursor: pointer;"
-             (click)="toggleDropdown('categorias')"
-             [class.show]="activeMenu === 'categorias'"
-             routerLinkActive="active"
-             [routerLinkActiveOptions]="{exact: false}">
-            Categorías
-          </a>
+        <hr class="d-lg-none text-white-50">
 
-          <ul class="dropdown-menu" [class.show]="activeMenu === 'categorias'">
-            <li>
-              <a class="dropdown-item" routerLink="/categories" (click)="closeMenu()">
-                <i class="bi bi-list-ul me-2"></i>Listado General
-              </a>
-            </li>
-            <li>
-              <a class="dropdown-item" routerLink="/categories-form" (click)="closeMenu()">
-                <i class="bi bi-gear-fill me-2"></i>Gestión (CRUD)
-              </a>
-            </li>
-          </ul>
-        </li>
+        @if (!isLoggedIn) {
+          <li class="nav-item">
+            <a class="btn btn-light btn-sm ms-lg-3 px-3 fw-bold text-morado" 
+               routerLink="/login" 
+               (click)="closeMenu()">
+              <i class="bi bi-box-arrow-in-right me-1"></i> Ingresar
+            </a>
+          </li>
+        } @else {
+          <li class="nav-item dropdown ms-lg-2">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" 
+               style="cursor: pointer;"
+               (click)="toggleDropdown('perfil')"
+               [class.show]="activeMenu === 'perfil'">
+              <div class="avatar-nav me-2 bg-white text-morado d-flex align-items-center justify-content-center rounded-circle" 
+                   style="width: 32px; height: 32px; font-weight: bold;">
+                {{ currentUser?.nombre?.charAt(0) || 'U' }}
+              </div>
+              <span class="d-lg-none">Mi Perfil</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end shadow" [class.show]="activeMenu === 'perfil'">
+              <li class="dropdown-header">
+                <strong class="text-dark">{{ currentUser?.nombre }}</strong><br>
+                <small class="text-muted text-capitalize">{{ currentUser?.rol || 'Usuario' }}</small>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item text-danger" style="cursor: pointer;" (click)="logout(); closeMenu()">
+                  <i class="bi bi-box-arrow-left me-2"></i>Cerrar Sesión
+                </a>
+              </li>
+            </ul>
+          </li>
+        }
 
       </ul>
     </div>
   </div>
 </nav>
 
-<main class="fondo-principal py-4">
+<main class="fondo-principal py-4 min-vh-100">
   <div class="container">
     <router-outlet></router-outlet>
   </div>

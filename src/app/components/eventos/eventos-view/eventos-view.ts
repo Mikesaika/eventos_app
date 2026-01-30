@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { CurrencyPipe, UpperCasePipe } from '@angular/common';
+import { CurrencyPipe, UpperCasePipe, NgIf, TitleCasePipe } from '@angular/common'; // Agregamos NgIf y TitleCasePipe
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Service } from '../../../models/Service';
 import { Category } from '../../../models/Category';
@@ -47,11 +47,13 @@ export class EventoView implements OnInit, AfterViewInit {
     private fb: FormBuilder
   ) {
     this.formOrder = this.fb.group({
-      userId: ['', Validators.required],
-      date: ['', Validators.required],
-      serviceId: [''],
-      total: [0],
-      active: [true]
+      usuarioID: ['', Validators.required],
+      fechaEvento: ['', Validators.required],
+      servicioID: [''],
+      precioTotal: [0],
+      estado: ['Pendiente'],
+      observaciones: [''],
+      activo: [true] 
     });
   }
 
@@ -61,47 +63,54 @@ export class EventoView implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    if (typeof bootstrap !== 'undefined') {
+    if (typeof bootstrap !== 'undefined' && this.modalElement) {
       this.modalRef = new bootstrap.Modal(this.modalElement.nativeElement);
     }
   }
 
   loadServiceData() {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (!id) return;
+    const idParam = this.route.snapshot.paramMap.get('id');
+    if (!idParam) return;
+    const id = Number(idParam);
 
-    this.eventosService.getServiceById(id).subscribe((serv) => {
-      this.servicio = serv;
+    this.eventosService.getServiceById(id).subscribe({
+      next: (serv) => {
+        this.servicio = serv;
 
-      this.eventosService.getCategories().subscribe((cats) => {
-        this.categoria = cats.find((c) => Number(c.id) === Number(this.servicio.categoryId));
-      });
+  
+        this.eventosService.getCategories().subscribe((cats) => {
+          this.categoria = cats.find((c) => Number(c.categoriaID) === Number(this.servicio.categoriaID));
+        });
+        this.eventosService.getCompanies().subscribe((comps) => {
+          this.empresa = comps.find((c) => Number(c.empresaID) === Number(this.servicio.empresaID));
+        });
 
-      this.eventosService.getCompanies().subscribe((comps) => {
-        this.empresa = comps.find((c) => Number(c.id) === Number(this.servicio.companyId));
-      });
-
-      this.cargando = false;
+        this.cargando = false;
+      },
+      error: () => {
+        this.notify.show('No se pudo encontrar el servicio solicitado', 'error');
+        this.cargando = false;
+      }
     });
   }
 
   loadUsers() {
     this.userService.getUsers().subscribe({
       next: (data) => this.users = data,
-      error: () => this.notify.show('Error cargando usuarios', 'error')
+      error: () => this.notify.show('Error cargando la lista de usuarios', 'error')
     });
   }
-
-  //  LÓGICA DEL MODAL
 
   openOrderModal() {
     if (!this.servicio) return;
 
     this.formOrder.patchValue({
-      serviceId: this.servicio.id,
-      total: this.servicio.price,
-      date: new Date().toISOString().split('T')[0],
-      userId: ''
+      servicioID: this.servicio.servicioID,
+      precioTotal: this.servicio.precio,
+      fechaEvento: '', 
+      usuarioID: '',
+      estado: 'Pendiente',
+      activo: true
     });
 
     this.modalRef.show();
@@ -110,27 +119,34 @@ export class EventoView implements OnInit, AfterViewInit {
   saveOrder() {
     if (this.formOrder.invalid) {
       this.formOrder.markAllAsTouched();
-      this.notify.show('Por favor selecciona un usuario y fecha', 'error');
+      this.notify.show('Por favor completa los campos requeridos', 'warning');
       return;
     }
 
     const datos = this.formOrder.value;
 
-    datos.serviceId = Number(this.servicio.id);
-    datos.total = Number(this.servicio.price);
+    const orderToSave: Order = {
+      ...datos,
+      usuarioID: Number(datos.usuarioID),
+      servicioID: Number(this.servicio.servicioID),
+      precioTotal: Number(this.servicio.precio),
+      fechaOrden: new Date(), 
+      estado: 'Pendiente',
+      activo: true
+    };
 
-    this.orderService.createOrder(datos).subscribe({
+    this.orderService.createOrder(orderToSave).subscribe({
       next: () => {
-        this.notify.show('¡Cotización solicitada con éxito!', 'success');
+        this.notify.show('¡Solicitud enviada correctamente!', 'success');
         this.modalRef.hide();
-        this.formOrder.reset({ active: true });
+        this.formOrder.reset({ estado: 'Pendiente', activo: true });
       },
-      error: (err) => this.notify.show('Error al solicitar: ' + err.message, 'error')
+      error: (err) => this.notify.show('Error al procesar la solicitud', 'error')
     });
   }
 
   isFieldInvalid(field: string): boolean {
     const control = this.formOrder.get(field);
-    return control ? control.invalid && (control.dirty || control.touched) : false;
+    return !!control && control.invalid && (control.dirty || control.touched);
   }
 }

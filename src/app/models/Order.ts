@@ -1,8 +1,11 @@
 export interface Order {
-    id?: string;
-    userId: number;
-    serviceId: number;
-    date: string;
-    total: number;
-    active: boolean;
+    ordenID?: number;
+    usuarioID: number;
+    servicioID: number;
+    fechaOrden: Date | string;
+    fechaEvento: string;
+    precioTotal: number;
+    estado: 'Pendiente' | 'Confirmado' | 'Aprobado' | 'Cancelado' | 'Finalizado'; 
+    observaciones?: string;
+    activo: boolean;
 }

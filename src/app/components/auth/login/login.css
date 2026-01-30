@@ -1,0 +1,29 @@
+.login-container {
+  min-height: 80vh;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 450px;
+  border-radius: 15px;
+}
+
+.input-group-text {
+  color: #6c757d;
+}
+
+.form-control:focus {
+  border-color: #dee2e6;
+  box-shadow: none;
+}
+
+.btn-primary {
+  background-color: #6f42c1; /* Morado acorde a tu app */
+  border: none;
+  transition: all 0.3s;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #59359a;
+  transform: translateY(-1px);
+}

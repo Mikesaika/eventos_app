@@ -10,22 +10,23 @@ import { Order } from '../models/Order';
     providedIn: 'root',
 })
 export class ServEventosJson {
-    private baseUrl = 'http://localhost:3000';
+    
+    private baseUrl = 'http://localhost:5000/api'; 
 
-    private servicesUrl = `${this.baseUrl}/services`;
-    private categoriesUrl = `${this.baseUrl}/categories`;
-    private companiesUrl = `${this.baseUrl}/companies`;
-    private ordersUrl = `${this.baseUrl}/orders`;
-
+    private servicesUrl = `${this.baseUrl}/servicios`; 
+    private categoriesUrl = `${this.baseUrl}/categorias`;
+    private companiesUrl = `${this.baseUrl}/empresas`;
+    private ordersUrl = `${this.baseUrl}/ordenes`;
 
     constructor(private http: HttpClient) { }
 
-    //SERVICES 
+    // --- SERVICIOS ---
     getServices(): Observable<Service[]> {
         return this.http.get<Service[]>(this.servicesUrl);
     }
 
-    getServiceById(id: string): Observable<Service> {
+
+    getServiceById(id: number): Observable<Service> {
         const url = `${this.servicesUrl}/${id}`;
         return this.http.get<Service>(url);
     }
@@ -35,28 +36,40 @@ export class ServEventosJson {
     }
 
     updateService(service: Service): Observable<Service> {
-        const url = `${this.servicesUrl}/${service.id}`;
+        
+        const url = `${this.servicesUrl}/${service.servicioID}`;
         return this.http.put<Service>(url, service);
     }
 
-    deleteService(id: string): Observable<void> {
+    deleteService(id: number): Observable<void> {
         const url = `${this.servicesUrl}/${id}`;
         return this.http.delete<void>(url);
     }
-    //Estos son los servicios de los demas componentes de mis compañeros una vez hagan 
-    // su parte ellos tendran su propio servicio
-    // CATEGORIES 
+
+    // --- CATEGORÍAS ---
     getCategories(): Observable<Category[]> {
         return this.http.get<Category[]>(this.categoriesUrl);
     }
 
-    // COMPANIES 
+    getCategoryById(id: number): Observable<Category> {
+        return this.http.get<Category>(`${this.categoriesUrl}/${id}`);
+    }
+
+    // --- EMPRESAS ---
     getCompanies(): Observable<Company[]> {
         return this.http.get<Company[]>(this.companiesUrl);
     }
 
-    //  ORDERS 
+    getCompanyById(id: number): Observable<Company> {
+        return this.http.get<Company>(`${this.companiesUrl}/${id}`);
+    }
+
+    // --- ÓRDENES ---
     getOrders(): Observable<Order[]> {
         return this.http.get<Order[]>(this.ordersUrl);
+    }
+
+    getOrdersByUserId(usuarioID: number): Observable<Order[]> {
+        return this.http.get<Order[]>(`${this.ordersUrl}/usuario/${usuarioID}`);
     }
 }

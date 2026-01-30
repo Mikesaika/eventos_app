@@ -1,8 +1,8 @@
 export interface Company {
-    id?: string;
-    name: string;
-    contactEmail: string;
-    phone: string;
-    city: string;
-    active: boolean;
+    empresaID: number;
+    nombre: string;
+    emailContacto: string;
+    telefono: string;
+    ciudad: string;
+    activo: boolean;
 }

@@ -29,11 +29,12 @@ export class CategoryFormComponent implements OnInit {
     private notify: NotificationService,
     private modalService: NgbModal 
   ) {
+    // 1. Sincronización con nombres en español para SQL Server
     this.form = this.fb.group({
-      name: ['', [Validators.required, Validators.maxLength(50)]],
-      description: ['', Validators.required],
-      icon: [''],
-      active: [true]
+      nombre: ['', [Validators.required, Validators.maxLength(50)]],
+      descripcion: ['', Validators.required],
+      icono: ['bi-tag'],
+      activo: [true]
     });
   }
 
@@ -47,7 +48,13 @@ export class CategoryFormComponent implements OnInit {
       this.service.get(this.currentId).subscribe({
         next: (cat) => {
           if (cat) {
-            this.form.patchValue(cat);
+            // 2. Mapeo de datos recibidos al formulario en español
+            this.form.patchValue({
+              nombre: cat.nombre,
+              descripcion: cat.descripcion,
+              icono: cat.icono,
+              activo: cat.activo
+            });
           }
         },
         error: () => this.notify.show('Error al cargar la categoría', 'error')
@@ -62,10 +69,9 @@ export class CategoryFormComponent implements OnInit {
       return;
     }
 
-    const datos: Category = this.form.value as Category;
+    const datos = this.form.value;
 
     if (this.mode === 'new') {
-      // CREAR
       this.service.create(datos).subscribe({
         next: () => {
           this.notify.show('Categoría creada correctamente', 'success');
@@ -75,11 +81,15 @@ export class CategoryFormComponent implements OnInit {
       });
 
     } else {
-      // EDITAR
       if (this.currentId) {
-        const catUpdate = { ...datos, id: this.currentId };
+        // 3. Uso de categoriaID y corrección del error TS2554 (pasando solo 1 argumento)
+        const catUpdate: Category = { 
+          ...datos, 
+          categoriaID: this.currentId 
+        };
         
-        this.service.update(this.currentId, catUpdate).subscribe({
+        // CORRECCIÓN: Se envía solo el objeto si el servicio update(cat) espera un argumento
+        this.service.update(catUpdate).subscribe({
           next: () => {
             this.notify.show('Categoría actualizada', 'success');
             setTimeout(() => this.router.navigate(['/categories']), 1000);
@@ -90,18 +100,15 @@ export class CategoryFormComponent implements OnInit {
     }
   }
 
-  // LÓGICA DE ELIMINAR 
   delete() {
     if (!this.currentId) return;
 
-   //el diálogo de confirmación
     const modalRef = this.modalService.open(Dialog);
     modalRef.componentInstance.data = {
       title: 'Eliminar Categoría',
       message: '¿Estás seguro de que deseas eliminar esta categoría? No se puede deshacer.'
     };
 
-    // la respuesta
     modalRef.result.then((result) => {
       if (result === true) {
         this.service.delete(this.currentId!).subscribe({
@@ -111,7 +118,7 @@ export class CategoryFormComponent implements OnInit {
           },
           error: (err) => {
             console.error('Error backend:', err);
-            this.notify.show('Error al eliminar. Revisa la consola.', 'error');
+            this.notify.show('Error al eliminar', 'error');
           }
         });
       }

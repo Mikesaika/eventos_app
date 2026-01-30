@@ -1,77 +1,86 @@
-<div class="catalogo-wrapper">
-  <div class="encabezado text-center">
-    <h1 class="titulo-pagina">Catálogo de servicios para eventos</h1>
-    <p class="subtitulo">
-      Explora salones, comida, música, decoración y más para tu próximo evento.
+<div class="catalogo-wrapper p-4">
+  <div class="encabezado text-center mb-5">
+    <h1 class="titulo-pagina fw-bold display-5">Catálogo de Servicios para Eventos</h1>
+    <p class="subtitulo text-muted fs-5">
+      Explora salones, catering, música y decoración para que tu evento sea inolvidable.
     </p>
+    <div class="divider mx-auto bg-primary rounded" style="width: 60px; height: 4px;"></div>
   </div>
 
   @if (cargando) {
-    <div class="text-center texto-secundario mt-4">
-      <div class="spinner-border text-primary" role="status"></div>
-      <p class="mt-2">Cargando servicios...</p>
+    <div class="text-center py-5">
+      <div class="spinner-grow text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
+      <p class="mt-3 fw-semibold text-secondary">Sincronizando con el servidor...</p>
     </div>
   }
 
   @if (!cargando && services.length === 0) {
-    <div class="text-center texto-secundario mt-4">
-      No hay servicios disponibles por el momento.
+    <div class="text-center py-5 bg-light rounded shadow-sm">
+      <i class="bi bi-search display-1 text-muted"></i>
+      <p class="mt-3 fs-4 text-secondary">No hay servicios disponibles en este momento.</p>
     </div>
   }
 
   @if (!cargando && services.length > 0) {
-    <div class="row g-4 justify-content-center mt-3">
-      @for (servicio of services; track servicio.id) {
+    <div class="row g-4 justify-content-center">
+      @for (servicio of services; track servicio.servicioID) {
         <div class="col-12 col-sm-10 col-md-6 col-lg-4">
-          <div class="card card-servicio h-100">
-            <div class="img-container">
+          <div class="card card-servicio h-100 border-0 shadow-sm hover-shadow transition">
+            <div class="img-container position-relative overflow-hidden">
               <img
-                [src]="servicio.image"
+                [src]="servicio.imagenURL"
                 class="card-img-top img-servicio"
-                [alt]="servicio.name"
+                [alt]="servicio.nombre"
+                style="height: 220px; object-fit: cover;"
               />
               <span
-                class="badge badge-clasificacion"
-                [ngClass]="getBadgeClass(servicio.classification)"
+                class="badge badge-clasificacion position-absolute top-0 end-0 m-3 px-3 py-2 shadow-sm"
+                [ngClass]="getBadgeClass(servicio.clasificacion)"
               >
-                {{ servicio.classification | uppercase }}
+                <i class="bi bi-star-fill me-1"></i> {{ servicio.clasificacion | uppercase }}
               </span>
             </div>
 
-            <div class="card-body d-flex flex-column">
-              <h5 class="card-title nombre-servicio">
-                {{ servicio.name }}
+            <div class="card-body d-flex flex-column p-4">
+              <h5 class="card-title nombre-servicio fw-bold text-dark mb-2">
+                {{ servicio.nombre }}
               </h5>
 
-              <p class="card-text descripcion">
-                {{ servicio.description }}
+              <p class="card-text descripcion text-secondary small mb-3">
+                {{ servicio.descripcion }}
               </p>
 
-              <p class="mb-1 categoria">
-                <strong>Categoría:</strong>
-                {{ getCategoryName(servicio.categoryId) }}
-              </p>
+              <div class="mt-auto border-top pt-3">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <span class="text-muted small fw-bold">Categoría:</span>
+                  <span class="badge bg-light text-primary border border-primary-subtle">
+                    {{ getCategoryName(servicio.categoriaID) }}
+                  </span>
+                </div>
 
-              <p class="mb-1 precio">
-                <strong>Precio desde:</strong>
-                {{ servicio.price | currency: 'USD' }}
-              </p>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="text-muted small fw-bold">Precio desde:</span>
+                  <span class="text-success fw-bold fs-5">
+                    {{ servicio.precio | currency: 'USD' }}
+                  </span>
+                </div>
 
-              <div class="mt-auto pt-3 d-flex justify-content-between gap-2">
-                <a
-                  [routerLink]="['/eventos-view', servicio.id]"
-                  class="btn btn-outline-primary btn-sm btn-detalle"
-                >
-                  Ver detalle
-                </a>
+                <div class="d-flex justify-content-between gap-2">
+                  <a
+                    [routerLink]="['/eventos-view', servicio.servicioID]"
+                    class="btn btn-outline-primary btn-sm flex-grow-1 fw-bold"
+                  >
+                    Ver detalle
+                  </a>
 
-                <button
-                  type="button"
-                  class="btn btn-primary btn-sm btn-pedir"
-                  (click)="openOrderModal(servicio)"
-                >
-                  Pedir servicio
-                </button>
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-sm flex-grow-1 fw-bold shadow-sm"
+                    (click)="openOrderModal(servicio)"
+                  >
+                    <i class="bi bi-cart-plus me-1"></i> Cotizar
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -82,46 +91,67 @@
 </div>
 
 <div class="modal fade" id="orderModal" tabindex="-1" aria-hidden="true" #orderModalRef>
-  <div class="modal-dialog">
-    <div class="modal-content">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg">
       
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title">Confirmar Solicitud</h5>
+      <div class="modal-header bg-primary text-white py-3">
+        <h5 class="modal-title fw-bold">
+          <i class="bi bi-file-earmark-check me-2"></i>Confirmar Solicitud
+        </h5>
         <button type="button" class="btn-close btn-close-white" (click)="modalRef.hide()"></button>
       </div>
 
       <form [formGroup]="formOrder" (ngSubmit)="saveOrder()">
-        <div class="modal-body">
+        <div class="modal-body p-4">
           
           @if (selectedService) {
-            <div class="alert alert-light border">
-              <h6 class="text-primary fw-bold">{{ selectedService.name }}</h6>
-              <p class="mb-0 small text-muted">Precio estimado: <strong>{{ selectedService.price | currency:'USD' }}</strong></p>
+            <div class="alert alert-primary bg-primary-subtle border-0 d-flex justify-content-between align-items-center mb-4">
+              <div>
+                <h6 class="mb-0 fw-bold">{{ selectedService.nombre }}</h6>
+                <small class="text-muted">Servicio ID: #{{ selectedService.servicioID }}</small>
+              </div>
+              <div class="text-end">
+                <span class="h5 fw-bold text-primary">{{ selectedService.precio | currency:'USD' }}</span>
+              </div>
             </div>
           }
 
           <div class="mb-3">
-            <label class="form-label">¿Quién solicita el servicio? <span class="text-danger">*</span></label>
-            <select class="form-select" formControlName="userId" [class.is-invalid]="isFieldInvalid('userId')">
-              <option value="">Seleccione su usuario...</option>
-              @for (u of users; track u.id) {
-                <option [value]="u.id">{{ u.name }} ({{ u.email }})</option>
-              }
-            </select>
-            <div class="invalid-feedback">Debe seleccionar un usuario.</div>
+            <label class="form-label fw-bold">Cliente <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text bg-white"><i class="bi bi-person"></i></span>
+              <select class="form-select" formControlName="usuarioID" [class.is-invalid]="isFieldInvalid('usuarioID')">
+                <option value="">¿Quién solicita el servicio?</option>
+                @for (u of users; track u.usuarioID) {
+                  <option [value]="u.usuarioID">{{ u.nombre }}</option>
+                }
+              </select>
+            </div>
+            <div class="invalid-feedback">Debes seleccionar un cliente para proceder.</div>
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Fecha deseada del evento <span class="text-danger">*</span></label>
-            <input type="date" class="form-control" formControlName="date" [class.is-invalid]="isFieldInvalid('date')">
-            <div class="invalid-feedback">La fecha es requerida.</div>
+            <label class="form-label fw-bold">Fecha del Evento <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text bg-white"><i class="bi bi-calendar-event"></i></span>
+              <input type="date" class="form-control" formControlName="fechaEvento" [class.is-invalid]="isFieldInvalid('fechaEvento')">
+            </div>
+            <div class="invalid-feedback">La fecha es obligatoria.</div>
+          </div>
+
+          <div class="mb-0">
+            <label class="form-label fw-bold">Observaciones Adicionales</label>
+            <textarea class="form-control" formControlName="observaciones" rows="3" 
+              placeholder="Detalles sobre personalización, horario o requerimientos..."></textarea>
           </div>
 
         </div>
 
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="modalRef.hide()">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Confirmar Solicitud</button>
+        <div class="modal-footer bg-light py-3 border-0">
+          <button type="button" class="btn btn-outline-secondary px-4 fw-bold" (click)="modalRef.hide()">Cancelar</button>
+          <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm">
+            Enviar Cotización
+          </button>
         </div>
       </form>
 

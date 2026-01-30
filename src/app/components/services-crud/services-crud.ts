@@ -10,6 +10,7 @@ import { NotificationService } from '../../services/notification.service';
 import { Dialog } from '../../shared/dialog/dialog';
 import { NotificationComponent } from '../../shared/notification/notification';
 
+// Declaración para usar los modales de Bootstrap
 declare const bootstrap: any;
 
 @Component({
@@ -26,13 +27,15 @@ declare const bootstrap: any;
   styleUrls: ['./services-crud.css']
 })
 export class ServicesCrud implements OnInit, AfterViewInit {
+  // Listas de datos
   services: Service[] = [];
   allServices: Service[] = [];
   categories: Category[] = [];
   companies: Company[] = [];
 
+  // Control de Formulario y Modal
   formService!: FormGroup;
-  editingId: string | null = null;
+  editingId: number | null = null; 
   modalRef: any;
   @ViewChild('serviceModalRef') modalElement!: ElementRef;
 
@@ -42,15 +45,16 @@ export class ServicesCrud implements OnInit, AfterViewInit {
     private modalService: NgbModal,
     private notify: NotificationService
   ) {
+    // Inicialización del formulario con nombres en español (SQL Server compatible)
     this.formService = this.fb.group({
-      name: ['', [Validators.required, Validators.maxLength(100)]],
-      description: ['', Validators.required],
-      categoryId: ['', Validators.required],
-      companyId: ['', Validators.required],
-      price: [0, [Validators.required, Validators.min(0)]],
-      image: ['', Validators.required],
-      classification: ['', Validators.required],
-      active: [true]
+      nombre: ['', [Validators.required, Validators.maxLength(100)]],
+      descripcion: ['', Validators.required],
+      categoriaID: ['', Validators.required],
+      empresaID: ['', Validators.required],
+      precio: [0, [Validators.required, Validators.min(0)]],
+      imagenURL: ['', Validators.required],
+      clasificacion: ['', Validators.required],
+      activo: [true]
     });
   }
 
@@ -61,63 +65,66 @@ export class ServicesCrud implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    if (typeof bootstrap !== 'undefined') {
+    // Inicialización segura del modal de Bootstrap
+    if (typeof bootstrap !== 'undefined' && this.modalElement) {
       this.modalRef = new bootstrap.Modal(this.modalElement.nativeElement);
-    } else {
-      console.error('Bootstrap no está cargado.');
     }
   }
 
-  // CARGA DE DATOS 
+  // --- CARGA DE DATOS ---
   loadServices(): void {
     this.miServicio.getServices().subscribe({
       next: (data) => {
         this.services = data;
-        this.allServices = data;
+        this.allServices = [...data];
       },
-      error: (e) => this.notify.show('Error al cargar servicios', 'error')
+      error: () => this.notify.show('Error al cargar servicios', 'error')
     });
   }
 
   loadCategories(): void {
-    this.miServicio.getCategories().subscribe(data => this.categories = data);
+    this.miServicio.getCategories().subscribe({
+      next: (data) => this.categories = data,
+      error: () => this.notify.show('Error al cargar categorías', 'error')
+    });
   }
 
   loadCompanies(): void {
-    this.miServicio.getCompanies().subscribe(data => this.companies = data);
+    this.miServicio.getCompanies().subscribe({
+      next: (data) => this.companies = data,
+      error: () => this.notify.show('Error al cargar empresas', 'error')
+    });
   }
 
-  // BUSQUEDA 
+  // --- MÉTODOS DE BÚSQUEDA Y AYUDA ---
   search(input: HTMLInputElement) {
-    const term = input.value.toLowerCase();
-    if (!term) {
-      this.services = this.allServices;
-    } else {
-      this.services = this.allServices.filter(s =>
-        s.name.toLowerCase().includes(term) ||
-        s.description.toLowerCase().includes(term)
-      );
-    }
+    const term = input.value.toLowerCase().trim();
+    this.services = !term 
+      ? [...this.allServices] 
+      : this.allServices.filter(s => 
+          s.nombre.toLowerCase().includes(term) || 
+          s.descripcion.toLowerCase().includes(term)
+        );
   }
 
   getCategoryName(id: number): string {
-    const cat = this.categories.find(c => Number(c.id) === Number(id));
-    return cat ? cat.name : 'Sin Categoría';
+    const cat = this.categories.find(c => Number(c.categoriaID) === Number(id));
+    return cat ? cat.nombre : 'Sin Categoría';
   }
 
   getCompanyName(id: number): string {
-    const comp = this.companies.find(c => Number(c.id) === Number(id));
-    return comp ? comp.name : 'Sin Empresa';
+    const comp = this.companies.find(c => Number(c.empresaID) === Number(id));
+    return comp ? comp.nombre : 'Sin Empresa';
   }
 
   handleImageError(event: any) {
-    event.target.src = 'https://via.placeholder.com/50';
+    event.target.src = 'https://via.placeholder.com/150';
   }
 
-  // VALIDATORS
+  // --- VALIDACIONES REQUERIDAS POR EL HTML ---
   isFieldInvalid(field: string): boolean {
     const control = this.formService.get(field);
-    return control ? control.invalid && (control.dirty || control.touched) : false;
+    return !!control && control.invalid && (control.dirty || control.touched);
   }
 
   getFieldError(field: string, error: string): boolean {
@@ -125,20 +132,19 @@ export class ServicesCrud implements OnInit, AfterViewInit {
     return control ? control.hasError(error) : false;
   }
 
-  // MODALES
+  // --- GESTIÓN CRUD ---
   openNew() {
     this.editingId = null;
-    this.formService.reset({ active: true, price: 0 });
-    this.modalRef.show();
+    this.formService.reset({ activo: true, precio: 0, clasificacion: '' });
+    if (this.modalRef) this.modalRef.show();
   }
 
   openEdit(service: Service) {
-    this.editingId = service.id || null;
+    this.editingId = service.servicioID || null;
     this.formService.patchValue(service);
-    this.modalRef.show();
+    if (this.modalRef) this.modalRef.show();
   }
 
-  // GUARDAR
   save() {
     if (this.formService.invalid) {
       this.formService.markAllAsTouched();
@@ -146,12 +152,13 @@ export class ServicesCrud implements OnInit, AfterViewInit {
       return;
     }
 
-    const datos = this.formService.value;
-    datos.categoryId = Number(datos.categoryId);
-    datos.companyId = Number(datos.companyId);
+    const datos = { ...this.formService.value };
+    // Aseguramos tipos numéricos para el backend
+    datos.categoriaID = Number(datos.categoriaID);
+    datos.empresaID = Number(datos.empresaID);
 
     if (this.editingId) {
-      const serviceUpdate: Service = { ...datos, id: this.editingId };
+      const serviceUpdate: Service = { ...datos, servicioID: this.editingId };
       this.miServicio.updateService(serviceUpdate).subscribe({
         next: () => {
           this.notify.show('Servicio actualizado correctamente', 'success');
@@ -172,23 +179,21 @@ export class ServicesCrud implements OnInit, AfterViewInit {
     }
   }
 
-  // ELIMINAR
   delete(service: Service) {
     const modalRef = this.modalService.open(Dialog);
-
     modalRef.componentInstance.data = {
       title: 'Eliminar Servicio',
-      message: `¿Estás seguro de que deseas eliminar el servicio "${service.name}"?`
+      message: `¿Estás seguro de que deseas eliminar "${service.nombre}"?`
     };
 
     modalRef.result.then((result) => {
-      if (result === true && service.id) {
-        this.miServicio.deleteService(service.id).subscribe({
+      if (result === true && service.servicioID) {
+        this.miServicio.deleteService(service.servicioID).subscribe({
           next: () => {
             this.notify.show('Servicio eliminado correctamente', 'success');
             this.loadServices();
           },
-          error: (e) => this.notify.show('Error al eliminar servicio', 'error')
+          error: () => this.notify.show('Error al eliminar servicio', 'error')
         });
       }
     }).catch(() => { });

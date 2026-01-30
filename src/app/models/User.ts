@@ -1,11 +1,12 @@
 export interface User {
-    id?: string;
-    name: string;
+    usuarioID?: number;
+    nombre: string;
     email: string;
-    role:string;
-    phone:string;
-    Dateregis:Date;
-    addres: string;
-    active: boolean;
-    
+    passwordHash?: string; 
+    rol: 'Administrador' | 'Cliente' | 'Compañía'; // Corregida la tilde si así viene del backend
+    telefono: string;
+    direccion: string; 
+    fechaRegistro: Date | string;
+    empresaID?: number; 
+    activo: boolean; // CAMBIO: En tu db.json la propiedad es 'activo', no 'active'
 }

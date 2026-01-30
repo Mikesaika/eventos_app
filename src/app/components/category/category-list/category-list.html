@@ -1,16 +1,8 @@
 <div class="container mt-4">
-  
   <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
     <h2>Gestión de Categorías</h2>
-    
     <div class="d-flex gap-2">
-      <input 
-        type="text" 
-        class="form-control" 
-        placeholder="Buscar categoría..." 
-        (keyup)="search(txtSearch)" 
-        #txtSearch
-      >
+      <input type="text" class="form-control" placeholder="Buscar categoría..." (keyup)="search(txtSearch)" #txtSearch>
       <button class="btn btn-primary text-nowrap" (click)="openNew()">
         <i class="bi bi-plus-lg"></i> Nueva Categoría
       </button>
@@ -30,40 +22,28 @@
         </tr>
       </thead>
       <tbody>
-        @for (c of categories; track c.id; let i = $index) {
+        @for (c of categories; track c.categoriaID; let i = $index) {
           <tr>
             <td class="fw-bold">{{ i + 1 }}</td>
-            
             <td class="text-center">
-              <i class="bi fs-5 text-primary" [class]="c.icon || 'bi-tag'"></i>
+              <i class="bi fs-5 text-primary" [class]="c.icono || 'bi-tag'"></i>
             </td>
-
-            <td class="fw-semibold">{{ c.name }}</td>
-            <td class="text-muted small">{{ c.description }}</td>
-            
+            <td class="fw-semibold">{{ c.nombre }}</td>
+            <td class="text-muted small">{{ c.descripcion }}</td>
             <td>
               <span class="badge rounded-pill" 
-                [class.bg-success]="c.active" 
-                [class.bg-secondary]="!c.active">
-                {{ c.active ? 'Activa' : 'Inactiva' }}
+                [class.bg-success]="c.activo" 
+                [class.bg-secondary]="!c.activo">
+                {{ c.activo ? 'Activa' : 'Inactiva' }}
               </span>
             </td>
-
             <td class="text-end">
-              <button class="btn btn-sm btn-outline-primary me-2" (click)="openEdit(c)">
-                Editar
-              </button>
-              <button class="btn btn-sm btn-outline-danger" (click)="delete(c)">
-                Eliminar
-              </button>
+              <button class="btn btn-sm btn-outline-primary me-2" (click)="openEdit(c)">Editar</button>
+              <button class="btn btn-sm btn-outline-danger" (click)="delete(c)">Eliminar</button>
             </td>
           </tr>
         } @empty {
-          <tr>
-            <td colspan="6" class="text-center py-4 text-muted">
-              No se encontraron categorías.
-            </td>
-          </tr>
+          <tr><td colspan="6" class="text-center py-4 text-muted">No se encontraron categorías.</td></tr>
         }
       </tbody>
     </table>
@@ -73,64 +53,42 @@
 <div class="modal fade" id="categoryModal" tabindex="-1" aria-hidden="true" #categoryModalRef>
   <div class="modal-dialog">
     <div class="modal-content">
-      
       <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title">
-          {{ editingId ? 'Editar Categoría' : 'Nueva Categoría' }}
-        </h5>
+        <h5 class="modal-title">{{ editingId ? 'Editar Categoría' : 'Nueva Categoría' }}</h5>
         <button type="button" class="btn-close btn-close-white" (click)="modalRef.hide()"></button>
       </div>
-
       <form [formGroup]="formCategory" (ngSubmit)="save()">
         <div class="modal-body">
-          
           <div class="row mb-3">
             <div class="col-md-8">
               <label class="form-label">Nombre <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" formControlName="name" 
-                [class.is-invalid]="isFieldInvalid('name')">
-              
+              <input type="text" class="form-control" formControlName="nombre" [class.is-invalid]="isFieldInvalid('nombre')">
               <div class="invalid-feedback">
-                @if (getFieldError('name', 'required')) {
-                  <span>El nombre es requerido.</span>
-                }
-                @if (getFieldError('name', 'maxlength')) {
-                  <span>Máximo 50 caracteres.</span>
-                }
+                @if (getFieldError('nombre', 'required')) { <span>El nombre es requerido.</span> }
+                @if (getFieldError('nombre', 'maxlength')) { <span>Máximo 50 caracteres.</span> }
               </div>
             </div>
-
             <div class="col-md-4">
               <label class="form-label">Icono (Clase)</label>
-              <input type="text" class="form-control" formControlName="icon" placeholder="bi-tag">
+              <input type="text" class="form-control" formControlName="icono" placeholder="bi-tag">
             </div>
           </div>
-
           <div class="mb-3">
             <label class="form-label">Descripción <span class="text-danger">*</span></label>
-            <textarea class="form-control" rows="3" formControlName="description"
-              [class.is-invalid]="isFieldInvalid('description')"></textarea>
-            
-            <div class="invalid-feedback">
-               La descripción es requerida.
-            </div>
+            <textarea class="form-control" rows="3" formControlName="descripcion" [class.is-invalid]="isFieldInvalid('descripcion')"></textarea>
+            <div class="invalid-feedback">La descripción es requerida.</div>
           </div>
-
           <div class="form-check mb-3">
-            <input class="form-check-input" type="checkbox" formControlName="active" id="checkCatActive">
+            <input class="form-check-input" type="checkbox" formControlName="activo" id="checkCatActive">
             <label class="form-check-label" for="checkCatActive">Categoría Activa</label>
           </div>
-
         </div>
-
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" (click)="modalRef.hide()">Cancelar</button>
           <button type="submit" class="btn btn-primary">Guardar</button>
         </div>
       </form>
-
     </div>
   </div>
 </div>
-
 <app-notification></app-notification>

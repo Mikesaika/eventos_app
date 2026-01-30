@@ -10,8 +10,8 @@ import { NgFor, NgIf } from '@angular/common';
 })
 export class TableReutilizable {
 
-  @Input() data: any[] = [];  // Datos de las películas
-  @Input() columns: string[] = [];  // Columnas para mostrar
+  @Input() data: any[] = []; 
+  @Input() columns: string[] = [];  
   @Input() headers: string[] = [];
   currentPage: number = 1;
   pageSize: number = 5;

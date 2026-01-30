@@ -1,22 +1,23 @@
 <div class="usuarios-wrapper py-4">
   <div class="container">
     <div class="mb-4">
-      <h2 class="fw-bold mb-1">Gestión de usuarios</h2>
+      <h2 class="fw-bold mb-1 text-primary">Gestión de Usuarios</h2>
+      <p class="text-muted small">Administra los accesos y perfiles de clientes y personal.</p>
     </div>
 
     <div class="row mb-4 align-items-center g-3">
-      <div class="col-auto">
-        <div class="card shadow-sm toolbar-card">
+      <div class="col-12 col-md-auto">
+        <div class="card shadow-sm border-0 toolbar-card">
           <div class="card-body py-2 px-3">
             <div class="row g-3 align-items-end">
               <div class="col-12 col-md-auto">
-                <label class="form-label small text-muted mb-1">Buscar</label>
-                <div class="input-group input-group-sm" style="min-width: 230px">
-                  <span class="input-group-text"> <i class="bi bi-search"></i> </span>
+                <label class="form-label small text-muted mb-1 fw-bold">Buscar Usuario</label>
+                <div class="input-group input-group-sm" style="min-width: 280px">
+                  <span class="input-group-text bg-white"> <i class="bi bi-search"></i> </span>
                   <input
                     type="text"
-                    class="form-control"
-                    placeholder="Nombre o correo"
+                    class="form-control border-start-0"
+                    placeholder="Nombre, correo o dirección..."
                     [(ngModel)]="searchTerm"
                     (ngModelChange)="filterUsers()"
                   />
@@ -29,288 +30,163 @@
       <div class="col-auto ms-auto">
         <button
           type="button"
-          class="btn custom-btn px-4 shadow-sm rounded-pill d-inline-flex align-items-center gap-2"
+          class="btn btn-primary px-4 shadow-sm rounded-pill d-inline-flex align-items-center gap-2"
           (click)="openCreateModal()"
         >
-          <i class="bi bi-plus-lg"></i> <span class="fw-semibold">Nuevo usuario</span>
+          <i class="bi bi-person-plus-fill"></i> <span class="fw-semibold">Nuevo Usuario</span>
         </button>
       </div>
     </div>
 
-    <div class="card shadow-sm table-card">
-      <div class="table-card-header d-flex align-items-center justify-content-between px-3 px-md-4">
+    <div class="card shadow-sm border-0 table-card overflow-hidden">
+      <div class="table-card-header d-flex align-items-center justify-content-between px-3 px-md-4 py-3 bg-light border-bottom">
         <div class="d-flex align-items-center gap-2">
-          <div class="icon-circle bg-white"><i class="bi bi-people-fill"></i></div>
-          <div>
-            <h6 class="mb-0 fw-bold">Usuarios registrados</h6>
+          <div class="icon-circle bg-primary text-white p-2 rounded-circle shadow-sm">
+            <i class="bi bi-people-fill"></i>
           </div>
+          <h6 class="mb-0 fw-bold text-dark">Usuarios Registrados</h6>
         </div>
-        <span class="badge bg-secondary-subtle text-primary-emphasis border border-primary-subtle">
+        <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3">
           {{ filteredUsers.length }} registros
         </span>
       </div>
 
       <div class="table-responsive">
-        <table class="table mb-0 align-middle usuarios-table">
-          <thead>
+        <table class="table mb-0 align-middle usuarios-table table-hover">
+          <thead class="table-light">
             <tr>
-              <th scope="col">Nombre</th>
-              <th scope="col">Correo</th>
-              <th scope="col">Numero Telefono</th>
-              <th scope="col">Direccion</th>
-              <th scope="col">fecha de registro</th>
+              <th scope="col" class="ps-4">Usuario</th>
+              <th scope="col">Contacto</th>
+              <th scope="col">Dirección</th>
+              <th scope="col">Registro</th>
               <th scope="col">Rol</th>
               <th scope="col" class="text-center">Estado</th>
               <th scope="col" class="text-center" style="width: 160px">Acciones</th>
             </tr>
           </thead>
           <tbody>
-            @for (u of filteredUsers; track u.id) {
+            @for (u of filteredUsers; track u.usuarioID) {
               <tr>
-                <td>
-                  <div class="fw-semibold">{{ u.name }}</div>
-                  <div class="small text-muted">{{ u.id || '—' }}</div>
+                <td class="ps-4">
+                  <div class="fw-bold text-dark">{{ u.nombre }}</div>
+                  <div class="small text-muted">ID: #{{ u.usuarioID || '—' }}</div>
                 </td>
                 <td>
-                  <span class="small text-muted">{{ u.email }}</span>
+                  <div class="small fw-semibold text-primary">{{ u.email }}</div>
+                  <div class="small text-muted"><i class="bi bi-phone me-1"></i>{{ u.telefono || 'Sin telf.' }}</div>
+                </td>
+                <td class="small text-muted" style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                  {{ u.direccion }}
+                </td>
+                <td class="small text-muted">
+                  {{ u.fechaRegistro | date: 'dd/MM/yyyy' }}
                 </td>
                 <td>
-                  <span class="small text-muted">{{ u.phone || '—' }}</span>
-                </td>
-                <td class="col-direccion">
-                  {{ u.addres }}
-                </td>
-                <td class="col-fecha">
-                  {{ u.Dateregis | date: 'dd-MM-yyyy HH:mm' }}
-                </td>
-                <td>
-                  <span class="badge rounded-pill bg-info-subtle text-info-emphasis">
-                    {{ u.role }}
+                  <span class="badge rounded-pill" 
+                    [class.bg-info-subtle]="u.rol === 'Administrador'"
+                    [class.text-info-emphasis]="u.rol === 'Administrador'"
+                    [class.bg-warning-subtle]="u.rol === 'Compañía'"
+                    [class.text-warning-emphasis]="u.rol === 'Compañía'"
+                    [class.bg-light]="u.rol === 'Cliente'">
+                    {{ u.rol }}
                   </span>
                 </td>
                 <td class="text-center">
                   <span
-                    class="badge rounded-pill px-3 py-1 estado-pill"
-                    [class.bg-success-subtle]="u.active"
-                    [class.text-success]="u.active"
-                    [class.bg-secondary-subtle]="!u.active"
-                    [class.text-secondary]="!u.active"
+                    class="badge rounded-pill px-3 py-1 shadow-sm"
+                    [class.bg-success]="u.activo"
+                    [class.bg-secondary]="!u.activo"
                   >
-                    {{ u.active ? 'Activo' : 'Inactivo' }}
+                    {{ u.activo ? 'Activo' : 'Inactivo' }}
                   </span>
                 </td>
                 <td class="text-center">
-                  <div class="d-flex justify-content-center gap-2">
-                    <button
-                      type="button"
-                      class="btn btn-outline-secondary btn-sm rounded-circle"
-                      title="Ver usuario"
-                      (click)="openViewModal(u)"
-                    >
-                      <i class="bi bi-eye"></i>
-                    </button>
-                    <button
-                      type="button"
-                      class="btn btn-outline-primary btn-sm rounded-circle"
-                      title="Editar usuario"
-                      (click)="openEditModal(u)"
-                    >
-                      <i class="bi bi-pencil"></i>
-                    </button>
-                    <button
-                      type="button"
-                      class="btn btn-outline-danger btn-sm rounded-circle"
-                      title="Eliminar usuario"
-                      (click)="deleteUser(u.id)"
-                    >
-                      <i class="bi bi-trash"></i>
-                    </button>
+                  <div class="d-flex justify-content-center gap-1">
+                    <button class="btn btn-sm btn-light border" (click)="openViewModal(u)"><i class="bi bi-eye"></i></button>
+                    <button class="btn btn-sm btn-light border text-primary" (click)="openEditModal(u)"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-sm btn-light border text-danger" (click)="deleteUser(u.usuarioID)"><i class="bi bi-trash"></i></button>
                   </div>
                 </td>
               </tr>
             } @empty {
               <tr>
-                <td colspan="5" class="text-center py-4">
-                  <div class="text-muted mb-1">No se encontraron usuarios.</div>
-                  <small class="text-muted">
-                    Ajusta los filtros o limpia el campo de búsqueda.
-                  </small>
+                <td colspan="7" class="text-center py-5">
+                  <i class="bi bi-person-exclamation display-4 text-muted"></i>
+                  <div class="mt-2 text-muted fw-bold">No se encontraron usuarios que coincidan con la búsqueda.</div>
                 </td>
               </tr>
             }
           </tbody>
         </table>
       </div>
-      <div
-        class="card-footer d-flex flex-column flex-md-row justify-content-between align-items-center gap-2"
-      >
-        <div class="d-flex align-items-center gap-2">
-          <span class="small text-muted">Filas por página:</span>
-          <select class="form-select form-select-sm" style="width: auto">
-            <option selected>10</option>
-            <option>25</option>
-            <option>50</option>
-          </select>
-        </div>
-        <nav aria-label="Paginación" class="mt-1 mt-md-0">
-          <ul class="pagination pagination-sm mb-0">
-            <li class="page-item disabled"><button class="page-link">First</button></li>
-            <li class="page-item disabled"><button class="page-link">&laquo;</button></li>
-            <li class="page-item active"><button class="page-link">1</button></li>
-            <li class="page-item"><button class="page-link">2</button></li>
-            <li class="page-item"><button class="page-link">3</button></li>
-            <li class="page-item"><button class="page-link">&raquo;</button></li>
-            <li class="page-item"><button class="page-link">Last</button></li>
-          </ul>
-        </nav>
-      </div>
     </div>
   </div>
 </div>
 
 @if (modalVisible) {
-  <div class="custom-modal-backdrop">
+  <div class="custom-modal-backdrop animate__animated animate__fadeIn">
     <div class="modal d-block" tabindex="-1">
       <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content shadow-lg border-0">
-          <div class="modal-header modal-header-pastel">
+        <div class="modal-content shadow-lg border-0 rounded-4 overflow-hidden">
+          <div class="modal-header bg-primary text-white py-3">
             <div>
-              <h5 class="modal-title mb-0">
-                {{ isEditing ? 'Editar usuario' : 'Registrar nuevo usuario' }}
+              <h5 class="modal-title fw-bold mb-0">
+                <i class="bi bi-person-circle me-2"></i>{{ isEditing ? 'Editar Perfil de Usuario' : 'Registrar Nuevo Miembro' }}
               </h5>
-              <small class="d-block text-muted">
-                {{
-                  isEditing
-                    ? 'Actualiza los datos del usuario seleccionado.'
-                    : 'Completa el formulario para crear un nuevo usuario.'
-                }}
-              </small>
             </div>
-            <button
-              type="button"
-              class="btn-close"
-              aria-label="Close"
-              (click)="closeModal(userForm)"
-            ></button>
+            <button type="button" class="btn-close btn-close-white" (click)="closeModal(userForm)"></button>
           </div>
 
           <form #userForm="ngForm" novalidate (submit)="onSubmit(userForm, $event)">
-            <div class="modal-body">
-              <div class="mb-3" [ngClass]="{ 'has-error': isFieldInvalid(userForm, 'name') }">
-                <label class="form-label fw-semibold">Nombre completo</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  name="name"
-                  [(ngModel)]="formModel.name"
-                  required
-                  placeholder="Ej. Carlos Pérez"
-                  [ngClass]="{ 'is-invalid': isFieldInvalid(userForm, 'name') }"
-                />
-                @if (isFieldInvalid(userForm, 'name')) {
-                  <small class="text-danger d-block mt-1">
-                    {{ getFieldError('name', userForm) }}
-                  </small>
-                }
-              </div>
-              <div class="mb-3" [ngClass]="{ 'has-error': isFieldInvalid(userForm, 'email') }">
-                <label class="form-label fw-semibold">Correo electrónico</label>
-                <input
-                  type="email"
-                  class="form-control"
-                  name="email"
-                  [(ngModel)]="formModel.email"
-                  required
-                  email
-                  placeholder="usuario@correo.com"
-                  [ngClass]="{ 'is-invalid': isFieldInvalid(userForm, 'email') }"
-                />
-                @if (isFieldInvalid(userForm, 'email')) {
-                  <small class="text-danger d-block mt-1">
-                    {{ getFieldError('email', userForm) }}
-                  </small>
-                }
-              </div>
-              <div class="mb-3" [ngClass]="{ 'has-error': isFieldInvalid(userForm, 'phone') }">
-                <label class="form-label fw-semibold">Telefono</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  name="phone"
-                  [(ngModel)]="formModel.phone"
-                  required
-                  placeholder="ej. 0912345678"
-                  [ngClass]="{ 'is-invalid': isFieldInvalid(userForm, 'phone') }"
-                />
-                @if (isFieldInvalid(userForm, 'phone')) {
-                  <small class="text-danger d-block mt-1">
-                    {{ getFieldError('phone', userForm) }}
-                  </small>
-                }
-              </div>
-              <div class="mb-3" [ngClass]="{ 'has-error': isFieldInvalid(userForm, 'addres') }">
-                <label class="form-label fw-semibold">Direccion</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  name="addres"
-                  [(ngModel)]="formModel.addres"
-                  required
-                  [ngClass]="{ 'is-invalid': isFieldInvalid(userForm, 'addres') }"
-                />
-                @if (isFieldInvalid(userForm, 'addres')) {
-                  <small class="text-danger d-block mt-1">
-                    {{ getFieldError('addres', userForm) }}
-                  </small>
-                }
-              </div>
+            <div class="modal-body p-4 bg-light-subtle">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label fw-bold small">Nombre Completo <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" name="nombre" [(ngModel)]="formModel.nombre" required
+                    [ngClass]="{ 'is-invalid': isFieldInvalid(userForm, 'nombre') }" />
+                </div>
 
-              <div class="mb-3" [ngClass]="{ 'has-error': isFieldInvalid(userForm, 'role') }">
-                <label class="form-label fw-semibold">Rol</label>
-                <select
-                  class="form-select"
-                  name="role"
-                  [(ngModel)]="formModel.role"
-                  required
-                  [ngClass]="{ 'is-invalid': isFieldInvalid(userForm, 'role') }"
-                >
-                  <option value="" disabled>Seleccione un rol</option>
-                  <option value="Administrador">Administrador</option>
-                  <option value="Cliente">Cliente</option>
-                  <option value="Proveedor">Proveedor</option>
-                </select>
-                @if (isFieldInvalid(userForm, 'role')) {
-                  <small class="text-danger d-block mt-1">
-                    {{ getFieldError('role', userForm) }}
-                  </small>
-                }
-              </div>
-              <div class="form-check mb-1">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  id="active"
-                  name="active"
-                  [(ngModel)]="formModel.active"
-                />
-                <label class="form-check-label fw-semibold" for="active"> Usuario activo </label>
+                <div class="col-md-6">
+                  <label class="form-label fw-bold small">Correo Electrónico <span class="text-danger">*</span></label>
+                  <input type="email" class="form-control" name="email" [(ngModel)]="formModel.email" required email
+                    [ngClass]="{ 'is-invalid': isFieldInvalid(userForm, 'email') }" />
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label fw-bold small">Teléfono de Contacto</label>
+                  <input type="text" class="form-control" name="telefono" [(ngModel)]="formModel.telefono"
+                    [ngClass]="{ 'is-invalid': isFieldInvalid(userForm, 'telefono') }" />
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label fw-bold small">Rol del Sistema <span class="text-danger">*</span></label>
+                  <select class="form-select" name="rol" [(ngModel)]="formModel.rol" required
+                    [ngClass]="{ 'is-invalid': isFieldInvalid(userForm, 'rol') }">
+                    <option value="Administrador">Administrador</option>
+                    <option value="Cliente">Cliente</option>
+                    <option value="Compañía">Compañía</option>
+                  </select>
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label fw-bold small">Dirección Domiciliaria <span class="text-danger">*</span></label>
+                  <textarea class="form-control" name="direccion" [(ngModel)]="formModel.direccion" required rows="2"
+                    [ngClass]="{ 'is-invalid': isFieldInvalid(userForm, 'direccion') }"></textarea>
+                </div>
+
+                <div class="col-12">
+                  <div class="form-check form-switch mt-2">
+                    <input class="form-check-input" type="checkbox" id="activo" name="activo" [(ngModel)]="formModel.activo" />
+                    <label class="form-check-label fw-bold" for="activo">Permitir acceso al sistema (Usuario Activo)</label>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="modal-footer d-flex justify-content-between">
-              <button
-                type="button"
-                class="btn btn-outline-secondary"
-                (click)="closeModal(userForm)"
-              >
-                Cancelar
-              </button>
 
-              <button
-                type="submit"
-                class="btn custom-btn fw-semibold"
-                [disabled]="!canSubmit(userForm)"
-              >
-                {{ isEditing ? 'Actualizar' : 'Guardar usuario' }}
+            <div class="modal-footer bg-light border-top-0 p-3">
+              <button type="button" class="btn btn-outline-secondary px-4 fw-bold" (click)="closeModal(userForm)">Cancelar</button>
+              <button type="submit" class="btn btn-primary px-5 fw-bold shadow-sm" [disabled]="!canSubmit(userForm)">
+                {{ isEditing ? 'Guardar Cambios' : 'Registrar Usuario' }}
               </button>
             </div>
           </form>
@@ -321,38 +197,23 @@
 }
 
 @if (viewModalVisible) {
-  <div class="custom-modal-backdrop">
+  <div class="custom-modal-backdrop animate__animated animate__fadeIn">
     <div class="modal d-block" tabindex="-1">
       <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content shadow-lg border-0">
-          <div class="modal-header modal-header-pastel">
-            <div>
-              <h5 class="modal-title mb-0">Detalle del usuario</h5>
-              <small class="d-block text-muted">
-                Visualiza la información del usuario en la tabla.
-              </small>
-            </div>
-            <button
-              type="button"
-              class="btn-close"
-              aria-label="Close"
-              (click)="closeViewModal()"
-            ></button>
+        <div class="modal-content shadow-lg border-0 rounded-4">
+          <div class="modal-header bg-dark text-white py-3">
+            <h5 class="modal-title fw-bold"><i class="bi bi-info-circle me-2"></i>Ficha Técnica del Usuario</h5>
+            <button type="button" class="btn-close btn-close-white" (click)="closeViewModal()"></button>
           </div>
-
-          <div class="modal-body table-modal-body">
+          <div class="modal-body p-0">
             <app-table-reutilizable
               [data]="viewTableData"
               [columns]="viewTableColumns"
               [headers]="viewTableHeaders"
-            >
-            </app-table-reutilizable>
+            ></app-table-reutilizable>
           </div>
-
-          <div class="modal-footer">
-            <button type="button" class="btn btn-outline-secondary" (click)="closeViewModal()">
-              Cerrar
-            </button>
+          <div class="modal-footer border-0">
+            <button type="button" class="btn btn-secondary fw-bold" (click)="closeViewModal()">Cerrar Vista</button>
           </div>
         </div>
       </div>

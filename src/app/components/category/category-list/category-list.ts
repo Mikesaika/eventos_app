@@ -23,11 +23,8 @@ declare const bootstrap: any;
 export class CategoryListComponent implements OnInit, AfterViewInit {
   categories: Category[] = [];
   allCategories: Category[] = [];
-
   formCategory!: FormGroup;
-  
-  editingId: number | string | null = null;
-  
+  editingId: number | null = null; // Cambiado a number para coincidir con SQL
   modalRef: any;
 
   @ViewChild('categoryModalRef') modalElement!: ElementRef;
@@ -39,22 +36,20 @@ export class CategoryListComponent implements OnInit, AfterViewInit {
     private notify: NotificationService,
     private route: ActivatedRoute 
   ) {
+    // Sincronizado con nombres en español
     this.formCategory = this.fb.group({
-      name: ['', [Validators.required, Validators.maxLength(50)]],
-      description: ['', Validators.required],
-      icon: ['bi-tag'],
-      active: [true]
+      nombre: ['', [Validators.required, Validators.maxLength(50)]],
+      descripcion: ['', Validators.required],
+      icono: ['bi-tag'],
+      activo: [true]
     });
   }
 
   ngOnInit(): void {
     this.loadData();
-
     this.route.queryParams.subscribe(params => {
       if (params['action'] === 'new') {
-        setTimeout(() => {
-          this.openNew();
-        }, 100);
+        setTimeout(() => { this.openNew(); }, 100);
       }
     });
   }
@@ -81,33 +76,37 @@ export class CategoryListComponent implements OnInit, AfterViewInit {
       this.categories = [...this.allCategories];
     } else {
       this.categories = this.allCategories.filter(c =>
-        c.name.toLowerCase().includes(term) ||
-        (c.description || '').toLowerCase().includes(term)
+        c.nombre.toLowerCase().includes(term) ||
+        (c.descripcion || '').toLowerCase().includes(term)
       );
     }
   }
 
   isFieldInvalid(field: string): boolean {
     const control = this.formCategory.get(field);
-    return control ? control.invalid && (control.dirty || control.touched) : false;
+    return !!control && control.invalid && (control.dirty || control.touched);
   }
 
   getFieldError(field: string, error: string): boolean {
     const control = this.formCategory.get(field);
-    return control ? control.hasError(error) : false;
+    return !!control && control.hasError(error);
   }
 
   openNew() {
     this.editingId = null;
-    this.formCategory.reset({ active: true, icon: 'bi-tag' });
+    this.formCategory.reset({ activo: true, icono: 'bi-tag' });
     this.modalRef.show();
   }
 
   openEdit(cat: Category) {
-
-    this.editingId = cat.id || null;
-    
-    this.formCategory.patchValue(cat);
+    this.editingId = cat.categoriaID || null;
+    // Mapeamos los datos al formulario
+    this.formCategory.patchValue({
+      nombre: cat.nombre,
+      descripcion: cat.descripcion,
+      icono: cat.icono,
+      activo: cat.activo
+    });
     this.modalRef.show();
   }
 
@@ -121,8 +120,9 @@ export class CategoryListComponent implements OnInit, AfterViewInit {
     const datos = this.formCategory.value;
 
     if (this.editingId) {
-      const catUpdate: Category = { ...datos, id: this.editingId };
-      this.service.update(this.editingId, catUpdate).subscribe({
+      // Sincronizado con categoriaID
+      const catUpdate: Category = { ...datos, categoriaID: this.editingId };
+      this.service.update(catUpdate).subscribe({ // Ajustado a 1 argumento si tu servicio lo pide así
         next: () => {
           this.notify.show('Categoría actualizada', 'success');
           this.modalRef.hide();
@@ -146,15 +146,12 @@ export class CategoryListComponent implements OnInit, AfterViewInit {
     const modalRef = this.modalService.open(Dialog);
     modalRef.componentInstance.data = {
       title: 'Eliminar Categoría',
-      message: `¿Eliminar la categoría "${cat.name}"?`
+      message: `¿Eliminar la categoría "${cat.nombre}"?`
     };
 
     modalRef.result.then((result) => {
-      
-      if (result === true && cat.id) {
-        
-        
-        this.service.delete(cat.id).subscribe({
+      if (result === true && cat.categoriaID) {
+        this.service.delete(cat.categoriaID).subscribe({
           next: () => {
             this.notify.show('Categoría eliminada', 'success');
             this.loadData();

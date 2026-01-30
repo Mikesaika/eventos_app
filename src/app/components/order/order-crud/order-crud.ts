@@ -1,18 +1,21 @@
 import { Component, ElementRef, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgFor, NgIf, NgClass, CurrencyPipe, DatePipe } from '@angular/common';
+import { NgClass, TitleCasePipe, CurrencyPipe, DatePipe, UpperCasePipe } from '@angular/common';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { forkJoin } from 'rxjs';
 
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+// Modelos e Interfaces
 import { Order } from '../../../models/Order';
 import { User } from '../../../models/User';
 import { Service } from '../../../models/Service';
 
-// Servicios
+// Servicios de Datos
 import { OrderService } from '../../../services/order.service';
 import { UserService } from '../../../services/user.service';
 import { ServEventosJson } from '../../../services/serv.service';
 import { NotificationService } from '../../../services/notification.service';
+
+// Componentes Compartidos
 import { NotificationComponent } from '../../../shared/notification/notification';
 import { Dialog } from '../../../shared/dialog/dialog';
 
@@ -23,11 +26,10 @@ declare const bootstrap: any;
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    NgIf,
-    NgFor,
     NgClass,
     CurrencyPipe,
     DatePipe,
+    UpperCasePipe, 
     NotificationComponent
   ],
   templateUrl: './order-crud.html',
@@ -40,7 +42,7 @@ export class OrderCrud implements OnInit, AfterViewInit {
   services: Service[] = [];
 
   formOrder!: FormGroup;
-  editingId: string | null = null;
+  editingId: number | null = null; 
   modalRef: any;
   @ViewChild('orderModalRef') modalElement!: ElementRef;
 
@@ -53,11 +55,13 @@ export class OrderCrud implements OnInit, AfterViewInit {
     private notify: NotificationService 
   ) {
     this.formOrder = this.fb.group({
-      userId: ['', [Validators.required]],
-      serviceId: ['', [Validators.required]],
-      date: ['', [Validators.required]],
-      total: [0, [Validators.required, Validators.min(0)]],
-      active: [true]
+      usuarioID: ['', [Validators.required]],
+      servicioID: ['', [Validators.required]],
+      fechaEvento: ['', [Validators.required]],
+      precioTotal: [0, [Validators.required, Validators.min(0)]],
+      estado: ['Pendiente', [Validators.required]],
+      observaciones: [''],
+      activo: [true] 
     });
   }
 
@@ -66,15 +70,13 @@ export class OrderCrud implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    if (typeof bootstrap !== 'undefined') {
+    if (typeof bootstrap !== 'undefined' && this.modalElement) {
       this.modalRef = new bootstrap.Modal(this.modalElement.nativeElement);
-    } else {
-      console.error('Bootstrap no está cargado.');
     }
   }
 
-  // CARGA DE DATOS 
   loadData(): void {
+
     forkJoin({
       orders: this.orderService.getOrders(),
       users: this.userService.getUsers(),
@@ -86,78 +88,74 @@ export class OrderCrud implements OnInit, AfterViewInit {
         this.orders = response.orders;
         this.allOrders = [...response.orders];
       },
-      error: (err) => {
-        this.notify.show('Error al cargar datos iniciales', 'error');
-      }
+      error: () => this.notify.show('Error al sincronizar con SQL Server', 'error')
     });
   }
 
-  // BUSQUEDA 
+  // --- MÉTODOS DE BÚSQUEDA Y MAPEO ---
+
   search(input: HTMLInputElement) {
     const term = input.value.toLowerCase().trim();
     if (!term) {
       this.orders = [...this.allOrders];
     } else {
       this.orders = this.allOrders.filter(o =>
-        this.getUserName(o.userId).toLowerCase().includes(term) ||
-        this.getServiceName(o.serviceId).toLowerCase().includes(term) ||
-        o.date.includes(term) ||
-        o.total.toString().includes(term)
+        this.getUserName(o.usuarioID).toLowerCase().includes(term) ||
+        this.getServiceName(o.servicioID).toLowerCase().includes(term) ||
+        (o.estado && o.estado.toLowerCase().includes(term))
       );
     }
   }
 
   getUserName(id: any): string {
-    if (!id) return 'Sin Usuario';
-    const user = this.users.find(u => String(u.id) === String(id));
-    return user ? user.name : 'Usuario no encontrado';
+    const user = this.users.find(u => Number(u.usuarioID) === Number(id));
+    return user ? user.nombre : 'Usuario no encontrado';
   }
 
   getServiceName(id: any): string {
-    if (!id) return 'Sin Servicio';
-    const service = this.services.find(s => String(s.id) === String(id));
-    return service ? service.name : 'Servicio no encontrado';
+    const service = this.services.find(s => Number(s.servicioID) === Number(id));
+    return service ? service.nombre : 'Servicio no encontrado';
   }
 
   getServicePrice(id: any): number {
-    const service = this.services.find(s => String(s.id) === String(id));
-    return service ? service.price : 0;
+    const service = this.services.find(s => Number(s.servicioID) === Number(id));
+    return service ? service.precio : 0;
   }
 
-  // VALIDADORES
+  // --- LÓGICA DE FORMULARIO ---
+
+  onServiceChange() {
+    const servicioID = this.formOrder.get('servicioID')?.value;
+    if (servicioID) {
+      const price = this.getServicePrice(servicioID);
+      this.formOrder.patchValue({ precioTotal: price });
+    }
+  }
 
   isFieldInvalid(field: string): boolean {
     const control = this.formOrder.get(field);
-    return control ? control.invalid && (control.dirty || control.touched) : false;
+    return !!control && control.invalid && (control.dirty || control.touched);
   }
 
   getFieldError(field: string, error: string): boolean {
     const control = this.formOrder.get(field);
-    return control ? control.hasError(error) : false;
+    return !!control && control.hasError(error);
   }
 
-  // MODALES 
+  // --- ACCIONES CRUD ---
+
   openNew() {
     this.editingId = null;
-    this.formOrder.reset({ active: true, total: 0 });
+    this.formOrder.reset({ estado: 'Pendiente', precioTotal: 0, activo: true });
     this.modalRef.show();
   }
 
   openEdit(order: Order) {
-    this.editingId = order.id || null;
+    this.editingId = order.ordenID || null;
     this.formOrder.patchValue(order);
     this.modalRef.show();
   }
 
-  onServiceChange() {
-    const serviceId = this.formOrder.get('serviceId')?.value;
-    if (serviceId) {
-      const price = this.getServicePrice(serviceId);
-      this.formOrder.patchValue({ total: price });
-    }
-  }
-
-  // GUARDAR 
   save() {
     if (this.formOrder.invalid) {
       this.formOrder.markAllAsTouched();
@@ -166,56 +164,50 @@ export class OrderCrud implements OnInit, AfterViewInit {
     }
 
     const datos = this.formOrder.value;
-
-    datos.total = Number(datos.total);
+    const payload: Order = {
+      ...datos,
+      usuarioID: Number(datos.usuarioID),
+      servicioID: Number(datos.servicioID),
+      precioTotal: Number(datos.precioTotal),
+      ordenID: this.editingId || undefined
+    };
 
     if (this.editingId) {
-      // EDITAR
-      const orderUpdate: Order = { ...datos, id: this.editingId };
-      this.orderService.updateOrder(orderUpdate).subscribe({
+      this.orderService.updateOrder(payload).subscribe({
         next: () => {
-          this.notify.show('Pedido actualizado correctamente', 'success');
+          this.notify.show('Pedido actualizado en DB', 'success');
           this.modalRef.hide();
           this.loadData();
         },
-        error: (err) => {
-          this.notify.show('Error al actualizar: ' + err.message, 'error');
-        }
+        error: (err) => this.notify.show('Error en SQL: ' + err.message, 'error')
       });
     } else {
-      // CREAR
-      this.orderService.createOrder(datos).subscribe({
+      this.orderService.createOrder(payload).subscribe({
         next: () => {
-          this.notify.show('Pedido creado exitosamente', 'success');
+          this.notify.show('Pedido registrado en SQL Server', 'success');
           this.modalRef.hide();
           this.loadData();
         },
-        error: (err) => {
-          this.notify.show('Error al crear: ' + err.message, 'error');
-        }
+        error: (err) => this.notify.show('Error al registrar pedido', 'error')
       });
     }
   }
 
-  // ELIMINAR 
   delete(order: Order) {
     const modalRef = this.modalService.open(Dialog);
-
     modalRef.componentInstance.data = {
-      title: 'Eliminar Pedido',
-      message: `¿Estás seguro de que deseas eliminar el pedido del usuario "${this.getUserName(order.userId)}"?`
+      title: 'Eliminar Registro',
+      message: `¿Borrar pedido de "${this.getUserName(order.usuarioID)}"?`
     };
 
     modalRef.result.then((result) => {
-      if (result === true && order.id) {
-        this.orderService.deleteOrder(order.id).subscribe({
+      if (result === true && order.ordenID) {
+        this.orderService.deleteOrder(order.ordenID).subscribe({
           next: () => {
-            this.notify.show('Pedido eliminado correctamente', 'success');
+            this.notify.show('Registro eliminado de la base de datos', 'success');
             this.loadData();
           },
-          error: (e) => {
-            this.notify.show('Error al eliminar pedido', 'error');
-          }
+          error: () => this.notify.show('Error al eliminar en el servidor', 'error')
         });
       }
     }).catch(() => { });

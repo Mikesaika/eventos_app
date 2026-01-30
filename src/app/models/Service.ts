@@ -1,11 +1,11 @@
 export interface Service {
-    id?: string;
-    name: string;
-    description: string;
-    categoryId: number;
-    companyId: number;
-    price: number;
-    image: string;
-    classification: 'plata' | 'oro' | 'diamante' | string;
-    active: boolean;
-}       
+    servicioID?: number;
+    nombre: string;
+    descripcion: string;
+    precio: number;
+    imagenURL: string;
+    clasificacion: string;
+    categoriaID: number;
+    empresaID: number;
+    activo: boolean;
+}
