@@ -5,7 +5,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Service } from '../../models/Service';
 import { Category } from '../../models/Category';
 import { Company } from '../../models/Company';
-import { ServEventosJson } from '../../services/ServEventosJson';
+import { ServEventosJson } from '../../services/serv.service';
 import { NotificationService } from '../../services/notification.service';
 import { Dialog } from '../../shared/dialog/dialog';
 import { NotificationComponent } from '../../shared/notification/notification';

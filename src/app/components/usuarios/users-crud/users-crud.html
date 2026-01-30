@@ -56,6 +56,9 @@
             <tr>
               <th scope="col">Nombre</th>
               <th scope="col">Correo</th>
+              <th scope="col">Numero Telefono</th>
+              <th scope="col">Direccion</th>
+              <th scope="col">fecha de registro</th>
               <th scope="col">Rol</th>
               <th scope="col" class="text-center">Estado</th>
               <th scope="col" class="text-center" style="width: 160px">Acciones</th>
@@ -70,6 +73,15 @@
                 </td>
                 <td>
                   <span class="small text-muted">{{ u.email }}</span>
+                </td>
+                <td>
+                  <span class="small text-muted">{{ u.phone || '—' }}</span>
+                </td>
+                <td class="col-direccion">
+                  {{ u.addres }}
+                </td>
+                <td class="col-fecha">
+                  {{ u.Dateregis | date: 'dd-MM-yyyy HH:mm' }}
                 </td>
                 <td>
                   <span class="badge rounded-pill bg-info-subtle text-info-emphasis">
@@ -181,6 +193,7 @@
               (click)="closeModal(userForm)"
             ></button>
           </div>
+
           <form #userForm="ngForm" novalidate (submit)="onSubmit(userForm, $event)">
             <div class="modal-body">
               <div class="mb-3" [ngClass]="{ 'has-error': isFieldInvalid(userForm, 'name') }">
@@ -218,6 +231,40 @@
                   </small>
                 }
               </div>
+              <div class="mb-3" [ngClass]="{ 'has-error': isFieldInvalid(userForm, 'phone') }">
+                <label class="form-label fw-semibold">Telefono</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="phone"
+                  [(ngModel)]="formModel.phone"
+                  required
+                  placeholder="ej. 0912345678"
+                  [ngClass]="{ 'is-invalid': isFieldInvalid(userForm, 'phone') }"
+                />
+                @if (isFieldInvalid(userForm, 'phone')) {
+                  <small class="text-danger d-block mt-1">
+                    {{ getFieldError('phone', userForm) }}
+                  </small>
+                }
+              </div>
+              <div class="mb-3" [ngClass]="{ 'has-error': isFieldInvalid(userForm, 'addres') }">
+                <label class="form-label fw-semibold">Direccion</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="addres"
+                  [(ngModel)]="formModel.addres"
+                  required
+                  [ngClass]="{ 'is-invalid': isFieldInvalid(userForm, 'addres') }"
+                />
+                @if (isFieldInvalid(userForm, 'addres')) {
+                  <small class="text-danger d-block mt-1">
+                    {{ getFieldError('addres', userForm) }}
+                  </small>
+                }
+              </div>
+
               <div class="mb-3" [ngClass]="{ 'has-error': isFieldInvalid(userForm, 'role') }">
                 <label class="form-label fw-semibold">Rol</label>
                 <select
@@ -250,7 +297,11 @@
               </div>
             </div>
             <div class="modal-footer d-flex justify-content-between">
-              <button type="button" class="btn btn-outline-secondary" (click)="closeModal(userForm)">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                (click)="closeModal(userForm)"
+              >
                 Cancelar
               </button>
 
@@ -274,7 +325,6 @@
     <div class="modal d-block" tabindex="-1">
       <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content shadow-lg border-0">
-        
           <div class="modal-header modal-header-pastel">
             <div>
               <h5 class="modal-title mb-0">Detalle del usuario</h5>
@@ -290,7 +340,7 @@
             ></button>
           </div>
 
-          <div class="modal-body">
+          <div class="modal-body table-modal-body">
             <app-table-reutilizable
               [data]="viewTableData"
               [columns]="viewTableColumns"

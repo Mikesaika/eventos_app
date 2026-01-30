@@ -11,7 +11,7 @@ import { Service } from '../../../models/Service';
 // Servicios
 import { OrderService } from '../../../services/order.service';
 import { UserService } from '../../../services/user.service';
-import { ServEventosJson } from '../../../services/ServEventosJson';
+import { ServEventosJson } from '../../../services/serv.service';
 import { NotificationService } from '../../../services/notification.service';
 import { NotificationComponent } from '../../../shared/notification/notification';
 import { Dialog } from '../../../shared/dialog/dialog';
@@ -50,7 +50,7 @@ export class OrderCrud implements OnInit, AfterViewInit {
     private miServicio: ServEventosJson,
     private fb: FormBuilder,
     private modalService: NgbModal,
-    private notify: NotificationService // <--- Inyectamos el servicio de notificación
+    private notify: NotificationService 
   ) {
     this.formOrder = this.fb.group({
       userId: ['', [Validators.required]],
@@ -128,7 +128,6 @@ export class OrderCrud implements OnInit, AfterViewInit {
 
   isFieldInvalid(field: string): boolean {
     const control = this.formOrder.get(field);
-    // Valida si es inválido Y (ha sido modificado O tocado)
     return control ? control.invalid && (control.dirty || control.touched) : false;
   }
 

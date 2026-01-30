@@ -11,12 +11,7 @@ import { NotificationComponent } from '../../../shared/notification/notification
 @Component({
   selector: 'app-users-crud',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    TableReutilizable,
-    NotificationComponent
-  ],
+  imports: [CommonModule, FormsModule, TableReutilizable, NotificationComponent],
   templateUrl: './users-crud.html',
   styleUrl: './users-crud.css',
 })
@@ -28,6 +23,9 @@ export class UsersCrud implements OnInit {
   formModel: User = {
     name: '',
     email: '',
+    phone: '', 
+    addres: '',
+    Dateregis: new Date(),
     role: '',
     active: true,
   };
@@ -38,14 +36,14 @@ export class UsersCrud implements OnInit {
   // Modal de ver
   viewModalVisible = false;
   viewTableData: any[] = [];
-  viewTableColumns: string[] = ['id', 'name', 'email', 'role', 'estado'];
-  viewTableHeaders: string[] = ['ID', 'Nombre', 'Correo', 'Rol', 'Estado'];
+  viewTableColumns: string[] = ['id', 'name', 'email', 'phone','addres','Dateregis','role', 'estado'];
+  viewTableHeaders: string[] = ['ID', 'Nombre', 'Correo', 'telefono','Direccion','Fecha de Registro','Rol', 'Estado'];
 
   constructor(
     private service: UserService,
     private modalService: NgbModal,
-    private notify: NotificationService
-  ) { }
+    private notify: NotificationService,
+  ) {}
 
   ngOnInit() {
     this.loadUsers();
@@ -57,7 +55,7 @@ export class UsersCrud implements OnInit {
         this.users = data;
         this.filteredUsers = data;
       },
-      error: (e) => this.notify.show('Error al cargar usuarios', 'error')
+      error: (e) => this.notify.show('Error al cargar usuarios', 'error'),
     });
   }
 
@@ -67,11 +65,12 @@ export class UsersCrud implements OnInit {
       (u) =>
         (u.name ?? '').toLowerCase().includes(term) ||
         (u.email ?? '').toLowerCase().includes(term) ||
-        (u.role ?? '').toLowerCase().includes(term)
+         (u.phone ?? '').toLowerCase().includes(term) ||
+        (u.role ?? '').toLowerCase().includes(term),
     );
   }
 
-  /// LÓGICA DE VALIDACIÓN  
+  /// LÓGICA DE VALIDACIÓN
 
   isFieldInvalid(form: NgForm | undefined, field: keyof User): boolean {
     if (!form) return false;
@@ -87,6 +86,8 @@ export class UsersCrud implements OnInit {
     if (control.errors['required']) {
       if (field === 'name') return 'El nombre es obligatorio.';
       if (field === 'email') return 'El correo es obligatorio.';
+      if (field === 'phone') return 'El Telefono es obligatorio.';
+      if (field === 'addres') return 'La direccion es obligatoria.';
       if (field === 'role') return 'El rol es obligatorio.';
       return 'Este campo es obligatorio.';
     }
@@ -107,13 +108,16 @@ export class UsersCrud implements OnInit {
     return this.isFormValid(form);
   }
 
-  // MODAL PRINCIPAL (CREAR / EDITAR)  
+  // MODAL PRINCIPAL (CREAR / EDITAR)
 
   openCreateModal() {
     this.isEditing = false;
     this.formModel = {
       name: '',
       email: '',
+      phone: '',
+      addres: '',
+      Dateregis: new Date(),
       role: '',
       active: true,
     };
@@ -154,7 +158,7 @@ export class UsersCrud implements OnInit {
           this.isEditing = false;
           this.notify.show('Usuario actualizado correctamente', 'success');
         },
-        error: (err) => this.notify.show('Error al actualizar: ' + err.message, 'error')
+        error: (err) => this.notify.show('Error al actualizar: ' + err.message, 'error'),
       });
     } else {
       // CREATE
@@ -165,11 +169,10 @@ export class UsersCrud implements OnInit {
           this.closeModal(form);
           this.notify.show('Usuario creado exitosamente', 'success');
         },
-        error: (err) => this.notify.show('Error al crear: ' + err.message, 'error')
+        error: (err) => this.notify.show('Error al crear: ' + err.message, 'error'),
       });
     }
   }
-
 
   deleteUser(id: string | undefined) {
     if (!id) return;
@@ -186,17 +189,19 @@ export class UsersCrud implements OnInit {
       showCancel: true,
     };
 
-    modalRef.result.then((result) => {
-      if (result === true) {
-        this.service.deleteUser(id).subscribe({
-          next: () => {
-            this.loadUsers();
-            this.notify.show('Usuario eliminado correctamente', 'success');
-          },
-          error: (err) => this.notify.show('Error al eliminar', 'error')
-        });
-      }
-    }).catch(() => { });
+    modalRef.result
+      .then((result) => {
+        if (result === true) {
+          this.service.deleteUser(id).subscribe({
+            next: () => {
+              this.loadUsers();
+              this.notify.show('Usuario eliminado correctamente', 'success');
+            },
+            error: (err) => this.notify.show('Error al eliminar', 'error'),
+          });
+        }
+      })
+      .catch(() => {});
   }
 
   //MODAL TABLE-REUTILIZABLE  //

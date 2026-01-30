@@ -1,17 +1,6 @@
 {
   "services": [
     {
-      "name": "Salon Real Versalles",
-      "description": "Salón amplio para 200 personas con aire acondicionado.",
-      "categoryId": 1,
-      "companyId": 1,
-      "price": 1500,
-      "image": "https://st4.depositphotos.com/38538500/39584/i/1600/depositphotos_395840042-stock-photo-versailles-france-2020-royal-salon.jpg",
-      "classification": "diamante",
-      "active": true,
-      "id": "1"
-    },
-    {
       "id": "2",
       "name": "Buffet Internacional",
       "description": "Menú de 3 tiempos con opciones de carne y mariscos.",
@@ -43,27 +32,9 @@
       "classification": "plata",
       "active": true,
       "id": "4"
-    },
-    {
-      "id": "b3e6",
-      "name": "Hora loca",
-      "description": "2 horas de musica y bailarines",
-      "categoryId": 3,
-      "companyId": 1,
-      "price": 750,
-      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuOPjP2w2GMdI3wWJQnBEKlv-H_F4ylBAYXA&s",
-      "classification": "plata",
-      "active": true
     }
   ],
   "categories": [
-    {
-      "name": "Lugares",
-      "description": "Alquiler de locales",
-      "icon": "home",
-      "active": true,
-      "id": "1"
-    },
     {
       "name": "Comida",
       "description": "buffets ",
@@ -98,13 +69,6 @@
       "description": "conserjes encargado de la limpieza",
       "icon": "",
       "active": true
-    },
-    {
-      "id": "b286",
-      "name": "limpieza",
-      "description": "conserjes encargado de la limpieza",
-      "icon": "",
-      "active": true
     }
   ],
   "companies": [
@@ -135,48 +99,35 @@
   ],
   "users": [
     {
-      "id": "1",
-      "name": "Carlos Perez",
-      "email": "carlos@gmail.com",
-      "active": true
+      "name": "pepe",
+      "email": "ricardo82qq22@outlook.com",
+      "phone": "0997727620",
+      "addres": "DOMINGO NORERO CERRUTI Y PUEBLO VIEJO",
+      "Dateregis": "2026-01-24T03:11:04.690Z",
+      "role": "Cliente",
+      "active": true,
+      "id": "G49S6G-"
     },
     {
-      "id": "2",
       "name": "Maria Lopez",
-      "email": "maria@hotmail.com",
-      "active": true
+      "email": "ricardo82qq22@outlook.com",
+      "phone": "0997727620",
+      "addres": "DOMINGO NORERO CERRUTI Y PUEBLO VIEJO",
+      "Dateregis": "2026-01-24T03:15:51.692Z",
+      "role": "Cliente",
+      "active": true,
+      "id": "fV6aaXm"
     },
     {
-      "id": "3",
-      "name": "Jorge Ramirez",
-      "email": "jorge@yahoo.com",
-      "active": false
+      "name": "Maria Lopez",
+      "email": "ricardo82qq22@outlook.com",
+      "phone": "0997727620",
+      "addres": "doce ava y la diez ava",
+      "Dateregis": "2026-01-24T04:03:30.609Z",
+      "role": "Administrador",
+      "active": true,
+      "id": "pFBXBzH"
     }
   ],
-  "orders": [
-    {
-      "id": "1",
-      "userId": 1,
-      "serviceId": 1,
-      "date": "2024-11-20",
-      "total": 1500,
-      "active": true
-    },
-    {
-      "id": "2",
-      "userId": 1,
-      "serviceId": 3,
-      "date": "2024-11-21",
-      "total": 400,
-      "active": true
-    },
-    {
-      "id": "3",
-      "userId": 2,
-      "serviceId": 2,
-      "date": "2024-10-05",
-      "total": 35.5,
-      "active": true
-    }
-  ]
+  "orders": []
 }

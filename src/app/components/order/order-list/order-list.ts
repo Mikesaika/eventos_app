@@ -6,7 +6,7 @@ import { User } from '../../../models/User';
 import { Service } from '../../../models/Service';
 import { OrderService } from '../../../services/order.service';
 import { UserService } from '../../../services/user.service';
-import { ServEventosJson } from '../../../services/ServEventosJson';
+import { ServEventosJson } from '../../../services/serv.service';
 import { NotificationComponent } from '../../../shared/notification/notification';
 
 @Component({

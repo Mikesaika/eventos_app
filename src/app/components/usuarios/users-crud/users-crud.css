@@ -95,3 +95,7 @@
   background-color: #b57ecba8 !important; 
   color: #000 !important;
 }
+.table-modal-body {
+  overflow-x: auto;
+  max-width: 100%;
+}

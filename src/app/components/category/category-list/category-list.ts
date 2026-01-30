@@ -25,7 +25,9 @@ export class CategoryListComponent implements OnInit, AfterViewInit {
   allCategories: Category[] = [];
 
   formCategory!: FormGroup;
-  editingId: number | null = null;
+  
+  editingId: number | string | null = null;
+  
   modalRef: any;
 
   @ViewChild('categoryModalRef') modalElement!: ElementRef;
@@ -35,7 +37,7 @@ export class CategoryListComponent implements OnInit, AfterViewInit {
     private fb: FormBuilder,
     private modalService: NgbModal,
     private notify: NotificationService,
-    private route: ActivatedRoute // <--- Inyección necesaria
+    private route: ActivatedRoute 
   ) {
     this.formCategory = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(50)]],
@@ -102,7 +104,9 @@ export class CategoryListComponent implements OnInit, AfterViewInit {
   }
 
   openEdit(cat: Category) {
-    this.editingId = cat.id ? Number(cat.id) : null;
+
+    this.editingId = cat.id || null;
+    
     this.formCategory.patchValue(cat);
     this.modalRef.show();
   }
@@ -146,8 +150,11 @@ export class CategoryListComponent implements OnInit, AfterViewInit {
     };
 
     modalRef.result.then((result) => {
+      
       if (result === true && cat.id) {
-        this.service.delete(Number(cat.id)).subscribe({
+        
+        
+        this.service.delete(cat.id).subscribe({
           next: () => {
             this.notify.show('Categoría eliminada', 'success');
             this.loadData();

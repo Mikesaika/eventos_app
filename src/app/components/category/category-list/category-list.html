@@ -42,7 +42,9 @@
             <td class="text-muted small">{{ c.description }}</td>
             
             <td>
-              <span class="badge rounded-pill" [class.bg-success]="c.active" [class.bg-secondary]="!c.active">
+              <span class="badge rounded-pill" 
+                [class.bg-success]="c.active" 
+                [class.bg-secondary]="!c.active">
                 {{ c.active ? 'Activa' : 'Inactiva' }}
               </span>
             </td>
@@ -87,15 +89,20 @@
               <label class="form-label">Nombre <span class="text-danger">*</span></label>
               <input type="text" class="form-control" formControlName="name" 
                 [class.is-invalid]="isFieldInvalid('name')">
+              
               <div class="invalid-feedback">
-                <span *ngIf="getFieldError('name', 'required')">Requerido.</span>
-                <span *ngIf="getFieldError('name', 'maxlength')">Máx 50 carac.</span>
+                @if (getFieldError('name', 'required')) {
+                  <span>El nombre es requerido.</span>
+                }
+                @if (getFieldError('name', 'maxlength')) {
+                  <span>Máximo 50 caracteres.</span>
+                }
               </div>
             </div>
 
             <div class="col-md-4">
               <label class="form-label">Icono (Clase)</label>
-              <input type="text" class="form-control" formControlName="icon" placeholder="bi-star">
+              <input type="text" class="form-control" formControlName="icon" placeholder="bi-tag">
             </div>
           </div>
 
@@ -103,7 +110,10 @@
             <label class="form-label">Descripción <span class="text-danger">*</span></label>
             <textarea class="form-control" rows="3" formControlName="description"
               [class.is-invalid]="isFieldInvalid('description')"></textarea>
-            <div class="invalid-feedback">Requerido.</div>
+            
+            <div class="invalid-feedback">
+               La descripción es requerida.
+            </div>
           </div>
 
           <div class="form-check mb-3">

@@ -7,7 +7,7 @@ import { Category } from '../../../models/Category';
 import { Company } from '../../../models/Company';
 import { User } from '../../../models/User';
 import { Order } from '../../../models/Order';
-import { ServEventosJson } from '../../../services/ServEventosJson';
+import { ServEventosJson } from '../../../services/serv.service';
 import { OrderService } from '../../../services/order.service';
 import { UserService } from '../../../services/user.service';
 import { NotificationService } from '../../../services/notification.service';

@@ -2,20 +2,14 @@ import { Component, ElementRef, OnInit, ViewChild, AfterViewInit } from '@angula
 import { RouterLink } from '@angular/router';
 import { NgClass, CurrencyPipe, UpperCasePipe } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-
-// Modelos
 import { Service } from '../../../models/Service';
 import { Category } from '../../../models/Category';
 import { User } from '../../../models/User';
 import { Order } from '../../../models/Order';
-
-// Servicios
-import { ServEventosJson } from '../../../services/ServEventosJson';
+import { ServEventosJson } from '../../../services/serv.service';
 import { OrderService } from '../../../services/order.service';
 import { UserService } from '../../../services/user.service';
 import { NotificationService } from '../../../services/notification.service';
-
-// Componentes
 import { NotificationComponent } from '../../../shared/notification/notification';
 
 declare const bootstrap: any;
@@ -110,7 +104,6 @@ export class EventoList implements OnInit, AfterViewInit {
     const datos = this.formOrder.value;
     datos.serviceId = Number(this.selectedService.id);
     datos.total = Number(this.selectedService.price);
-    // userId se queda como viene del form para evitar errores de tipo
 
     this.orderService.createOrder(datos).subscribe({
       next: () => {
