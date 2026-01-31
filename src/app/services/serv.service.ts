@@ -11,12 +11,14 @@ import { Order } from '../models/Order';
 })
 export class ServEventosJson {
     
-    private baseUrl = 'http://localhost:5000/api'; 
+    // 1. ELIMINAR EL PREFIJO /api: JSON Server no lo usa por defecto
+    private baseUrl = 'http://localhost:5000'; 
 
-    private servicesUrl = `${this.baseUrl}/servicios`; 
-    private categoriesUrl = `${this.baseUrl}/categorias`;
-    private companiesUrl = `${this.baseUrl}/empresas`;
-    private ordersUrl = `${this.baseUrl}/ordenes`;
+    // 2. SINCRONIZAR MAYÚSCULAS: Deben coincidir con las llaves de tu db.json
+    private servicesUrl = `${this.baseUrl}/Servicios`; 
+    private categoriesUrl = `${this.baseUrl}/Categorias`;
+    private companiesUrl = `${this.baseUrl}/Empresas`;
+    private ordersUrl = `${this.baseUrl}/Ordenes`;
 
     constructor(private http: HttpClient) { }
 
@@ -25,8 +27,8 @@ export class ServEventosJson {
         return this.http.get<Service[]>(this.servicesUrl);
     }
 
-
     getServiceById(id: number): Observable<Service> {
+        // Para que esto funcione, cada servicio en db.json debe tener un campo "id"
         const url = `${this.servicesUrl}/${id}`;
         return this.http.get<Service>(url);
     }
@@ -36,7 +38,6 @@ export class ServEventosJson {
     }
 
     updateService(service: Service): Observable<Service> {
-        
         const url = `${this.servicesUrl}/${service.servicioID}`;
         return this.http.put<Service>(url, service);
     }
@@ -60,16 +61,13 @@ export class ServEventosJson {
         return this.http.get<Company[]>(this.companiesUrl);
     }
 
-    getCompanyById(id: number): Observable<Company> {
-        return this.http.get<Company>(`${this.companiesUrl}/${id}`);
-    }
-
     // --- ÓRDENES ---
     getOrders(): Observable<Order[]> {
         return this.http.get<Order[]>(this.ordersUrl);
     }
 
     getOrdersByUserId(usuarioID: number): Observable<Order[]> {
-        return this.http.get<Order[]>(`${this.ordersUrl}/usuario/${usuarioID}`);
+        // Cambio de lógica para JSON Server: se filtra por query parameter
+        return this.http.get<Order[]>(`${this.ordersUrl}?usuarioID=${usuarioID}`);
     }
 }
